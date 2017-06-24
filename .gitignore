@@ -59,3 +59,8 @@ freeline_project_description.json
 .DS_Store
 /captures
 .externalNativeBuild
+
+# Temporary files from Emacs and vim
+*~
+\#*\#
+*.swp
