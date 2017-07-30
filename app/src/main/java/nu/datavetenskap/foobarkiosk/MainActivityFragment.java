@@ -15,7 +15,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -55,8 +54,8 @@ public class MainActivityFragment extends Fragment {
 
 
 
-        // Instantiate the Volley RequestQueue
-        final RequestQueue queue = Volley.newRequestQueue(getContext());
+        // Instantiate a RequestQueue from the Volley Singleton
+        final RequestQueue queue = VolleySingleton.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
         final String url = "http://10.0.2.2:8000/api/products/";
 
         _btn.setOnClickListener(new  View.OnClickListener() {

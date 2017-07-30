@@ -5,7 +5,7 @@ android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center_horizontal">
 
-<ImageView
+<com.android.volley.toolbox.NetworkImageView
     android:id="@+id/product_image"
     android:layout_width="190dp"
     android:layout_height="125dp"

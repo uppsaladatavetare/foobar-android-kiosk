@@ -6,14 +6,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.R;
+import nu.datavetenskap.foobarkiosk.VolleySingleton;
 import nu.datavetenskap.foobarkiosk.models.Product;
 
 
@@ -21,12 +24,13 @@ import nu.datavetenskap.foobarkiosk.models.Product;
 public class ProductGridAdapter extends ArrayAdapter<Product> {
 
     private Context mContext;
-    private ArrayList<Product> mProducts;
+    private ImageLoader mImageLoader;
+    private final String url = "http://10.0.2.2:8000";
 
     public ProductGridAdapter(Context c, ArrayList<Product> products) {
         super(c, R.layout.product_grid_layout, products);
         mContext = c;
-        mProducts = products;
+        mImageLoader = VolleySingleton.getInstance(c.getApplicationContext()).getImageLoader();
     }
 
 
@@ -37,24 +41,20 @@ public class ProductGridAdapter extends ArrayAdapter<Product> {
         ViewHolder holder;
         Product product = getItem(position);
 
-        if(convertView != null) {
-            holder = (ViewHolder) convertView.getTag();
-        } else {
+        if (convertView == null) {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.product_grid_layout, parent, false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
+            holder._name.setText(product.getName());
+            holder._img.setImageUrl(url + product.getImage(), mImageLoader);
         }
-
-
-        holder._name.setText(product.getName());
-
 
         return convertView;
     }
 
 
     static class ViewHolder {
-        @Bind(R.id.product_image) ImageView _img;
+        @Bind(R.id.product_image) NetworkImageView _img;
         @Bind(R.id.product_name) TextView _name;
 
         ViewHolder(View view) {
