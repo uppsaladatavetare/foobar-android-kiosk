@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Foobar Kiosk</string>
     <string name="action_settings">Settings</string>
+
+
+    <!-- Accessibility values -->
+    <string name="product_img_desc">ProductImage</string>
 </resources>

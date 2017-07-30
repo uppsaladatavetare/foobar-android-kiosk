@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.GridView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -18,12 +18,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.Settings.BuildConfig;
+import nu.datavetenskap.foobarkiosk.adapters.ProductGridAdapter;
 import nu.datavetenskap.foobarkiosk.models.Product;
 
 /**
@@ -31,8 +33,10 @@ import nu.datavetenskap.foobarkiosk.models.Product;
  */
 public class MainActivityFragment extends Fragment {
 
+    ProductGridAdapter productGrid;
+
     @Bind(R.id.btn_click) Button _btn;
-    @Bind(R.id.text_view) TextView _text;
+    @Bind(R.id.grid_view) GridView _grid;
 
     public MainActivityFragment() {
     }
@@ -43,6 +47,10 @@ public class MainActivityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         ButterKnife.bind(this, view);
+
+        productGrid = new ProductGridAdapter(this.getContext(), new ArrayList<Product>());
+
+        _grid.setAdapter(productGrid);
 
 
 
@@ -60,8 +68,8 @@ public class MainActivityFragment extends Fragment {
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                setText(response);
-                                //_text.setText("hej");
+                                addAllProducts(response);
+
                             }
                         },
                         new Response.ErrorListener() {
@@ -87,17 +95,13 @@ public class MainActivityFragment extends Fragment {
         return view;
     }
 
-    void setText(String str) {
+    void addAllProducts(String str) {
 
         Gson gson = new Gson();
         Product[] products = gson.fromJson(str, Product[].class);
-        String string = "Result: ";
-        for (Product p : products) {
-            string += p.getName() + ", ";
-        }
+        productGrid.addAll(products);
 
-        _text.setText(string);
-
+        productGrid.notifyDataSetChanged();
     }
 
 
