@@ -30,20 +30,20 @@ import nu.datavetenskap.foobarkiosk.models.Product;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MainActivityFragment extends Fragment {
+public class StoreFragment extends Fragment {
 
     ProductGridAdapter productGrid;
 
     @Bind(R.id.btn_click) Button _btn;
     @Bind(R.id.grid_view) GridView _grid;
 
-    public MainActivityFragment() {
+    public StoreFragment() {
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_store, container, false);
 
         ButterKnife.bind(this, view);
 

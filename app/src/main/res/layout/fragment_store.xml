@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nu.datavetenskap.foobarkiosk.MainActivityFragment"
+    tools:context="nu.datavetenskap.foobarkiosk.StoreFragment"
     tools:showIn="@layout/activity_main">
 
     <Button
