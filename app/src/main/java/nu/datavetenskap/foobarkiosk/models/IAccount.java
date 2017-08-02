@@ -1,6 +1,6 @@
 package nu.datavetenskap.foobarkiosk.models;
 
-class IAccount {
+public class IAccount {
     private String id;
     private String user_id;
     private String name;

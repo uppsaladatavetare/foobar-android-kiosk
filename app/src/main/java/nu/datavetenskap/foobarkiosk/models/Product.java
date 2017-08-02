@@ -14,6 +14,19 @@ public class Product {
     private Number qty;
     private String image;
 
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", code='" + code + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", active=" + active +
+                ", qty=" + qty +
+                ", image='" + image + '\'' +
+                '}';
+    }
 
     public String getId() {
         return id;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,14 @@ import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import nu.datavetenskap.foobarkiosk.models.IProduct;
+import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
 
 /**
  * A fragment with a Google +1 button.
@@ -131,18 +135,28 @@ public class CartFragment extends Fragment {
         /** Show a toast from the web page */
         @JavascriptInterface
         public void parseData(final String data) {
-            try {
-                final JSONObject json = new JSONObject(data);
-                final String str = json.toString(2);
+            //                final JSONObject json = new JSONObject(data);
+//                final String str = json.toString(2);
 
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        _txt.setText(str);
+            Log.d("Statemachine", data);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Gson gson = new Gson();
+                    IState state = gson.fromJson(data, IState.class);
+                    //Log.d("Statemachine", state.toString());
+                    ArrayList<IProduct> products = state.getProducts();
+
+                    String string = "";
+                    for (IProduct p : products) {
+                        string += p.getName() + "\n";
                     }
-                });
-            } catch (JSONException ignore) {}
 
+
+                    _txt.setText(string);
+                }
+            });
 
 
             Toast.makeText(mContext, "Data received", Toast.LENGTH_SHORT).show();
