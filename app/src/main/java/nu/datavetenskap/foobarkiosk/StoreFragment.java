@@ -68,6 +68,7 @@ public class StoreFragment extends Fragment {
                             @Override
                             public void onResponse(String response) {
                                 addAllProducts(response);
+                                Log.d("StoreFragmentButton", response);
 
                             }
                         },
@@ -102,7 +103,6 @@ public class StoreFragment extends Fragment {
 
         productGrid.notifyDataSetChanged();
     }
-
 
 
 }

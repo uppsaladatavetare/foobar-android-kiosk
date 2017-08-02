@@ -1,0 +1,10 @@
+<script src="https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js"></script>
+<script src="thunderpush.js"></script>
+
+<!-- Change the host-adress and client key to your thunderpush server -->
+<script>
+
+    Thunder.connect('THUNDERPUSH_HOST_ADDRESS', 'CLIENT_KEY', ['products', 'cards', 'state'], {log: true});
+    Thunder.listen(function(message) { Android.parseData(JSON.stringify(message)); });
+
+</script>
