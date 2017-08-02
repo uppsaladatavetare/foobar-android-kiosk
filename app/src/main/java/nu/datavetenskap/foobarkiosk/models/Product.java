@@ -5,14 +5,14 @@ package nu.datavetenskap.foobarkiosk.models;
  */
 
 public class Product {
-    String id;
-    String name;
-    String code;
-    String description;
-    Number price;
-    boolean active;
-    Number qty;
-    String image;
+    private String id;
+    private String name;
+    private String code;
+    private String description;
+    private Number price;
+    private boolean active;
+    private Number qty;
+    private String image;
 
 
     public String getId() {

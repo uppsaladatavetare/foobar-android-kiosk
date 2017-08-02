@@ -1,5 +1,6 @@
 package nu.datavetenskap.foobarkiosk;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -52,7 +53,8 @@ public class CartFragment extends Fragment {
         WebView.setWebContentsDebuggingEnabled(true);
 
 
-        _web.loadUrl("file:///android_asset/webloader.html");
+        _web.loadDataWithBaseURL("file:///android_asset/", webCode(), "text/html", "UTF-8", null);
+
         WebSettings webSettings = _web.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
@@ -93,6 +95,13 @@ public class CartFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+    private String webCode() {
+        Activity a = getActivity();
+        return "<script src=\"https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js\"></script>" +
+                "<script src=\"file:///android_asset/thunderpush.js\"></script>" +
+                "<script> Thunder.connect('" + a.getString(R.string.thunderpush_host) + "', '" + a.getString(R.string.thunderpush_client_key) + "', ['products', 'cards', 'state'], {log: true}); \n" +
+                "Thunder.listen(function(message) { Android.parseData(JSON.stringify(message)); }); </script>";
     }
 
     /**

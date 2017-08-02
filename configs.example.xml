@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Move this file into foobar-android-kiosk/app/src/main/res/values/configs.xml -->
+
+<resources>
+
+    <string name="foobar_api_token">Token INSERT-FOOBAR-API-TOKEN</string>
+
+    <string name="thunderpush_host">THUNDERPUSH_HOST</string>
+    <string name="thunderpush_client_key">clientkey</string>
+
+</resources>
