@@ -23,7 +23,6 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import nu.datavetenskap.foobarkiosk.Settings.BuildConfig;
 import nu.datavetenskap.foobarkiosk.adapters.ProductGridAdapter;
 import nu.datavetenskap.foobarkiosk.models.Product;
 
@@ -82,7 +81,7 @@ public class StoreFragment extends Fragment {
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String, String> headers = new HashMap<>();
-                        headers.put("Authorization", BuildConfig.FOOBAR_API_TOKEN);
+                        headers.put("Authorization", getString(R.string.foobar_api_token));
                         return headers;
                     }
                 };

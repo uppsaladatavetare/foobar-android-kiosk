@@ -34,7 +34,7 @@ public class WebViewFragment extends Fragment {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_web_view, container, false);
         mWebView = (WebView) v.findViewById(R.id.web_wiew_window);
-        mWebView.loadUrl("http://www.datavetenskap.nu/");
+        mWebView.loadUrl("http://192.168.1.21:3000");
 
         // Enable Javascript
         WebSettings webSettings = mWebView.getSettings();
