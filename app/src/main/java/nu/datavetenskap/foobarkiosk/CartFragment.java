@@ -13,7 +13,6 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -34,6 +33,7 @@ public class CartFragment extends Fragment {
 
 
     private OnFragmentInteractionListener mListener;
+    private IState activeState;
 
     @Bind(R.id.sidebar_text_view) TextView _txt;
     @Bind(R.id.web_viewer) WebView _web;
@@ -69,19 +69,63 @@ public class CartFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    public void addProductToCart() {
 
-        // Refresh the state of the +1 button each time the activity receives focus.
-        //mPlusOneButton.initialize(PLUS_ONE_URL, PLUS_ONE_REQUEST_CODE);
+
     }
+
+    private void updateState(IState newState) {
+        Log.d("CartFragment", "State updated");
+
+        final ArrayList<IProduct> products = newState.getProducts();
+
+        String string ="";
+        for (IProduct p : products) {
+            string += p.getName() + "\n";
+        }
+
+
+        _txt.setText(string);
+
+
+    }
+
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+
+    private String webCode() {
+        Activity a = getActivity();
+        return "<script src=\"https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js\"></script>" +
+                "<script src=\"file:///android_asset/thunderpush.js\"></script>" +
+                "<script> Thunder.connect('" + a.getString(R.string.thunderpush_host) + "', '" + a.getString(R.string.thunderpush_client_key) + "', ['products', 'cards', 'state'], {log: true}); \n" +
+                "Thunder.listen(function(message) { Android.parseData(JSON.stringify(message)); }); </script>";
+    }
+
+
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+
     }
 
     @Override
@@ -100,66 +144,43 @@ public class CartFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
-    private String webCode() {
-        Activity a = getActivity();
-        return "<script src=\"https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js\"></script>" +
-                "<script src=\"file:///android_asset/thunderpush.js\"></script>" +
-                "<script> Thunder.connect('" + a.getString(R.string.thunderpush_host) + "', '" + a.getString(R.string.thunderpush_client_key) + "', ['products', 'cards', 'state'], {log: true}); \n" +
-                "Thunder.listen(function(message) { Android.parseData(JSON.stringify(message)); }); </script>";
-    }
+    private class WebAppInterface {
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-
-    public class WebAppInterface {
         Context mContext;
 
         /** Instantiate the interface and set the context */
         WebAppInterface(Context c) {
             mContext = c;
         }
-
         /** Show a toast from the web page */
         @JavascriptInterface
         public void parseData(final String data) {
-            //                final JSONObject json = new JSONObject(data);
-//                final String str = json.toString(2);
 
-            Log.d("Statemachine", data);
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            Log.d("Cart - WebAppInterface", data);
+//            getActivity().runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    Gson gson = new Gson();
+//                    IState state = gson.fromJson(data, IState.class);
+//
+//                    ArrayList<IProduct> products = state.getProducts();
+//
+//                    String string = "";
+//                    for (IProduct p : products) {
+//                        string += p.getName() + "\n";
+//                    }
+//
+//
+//                    _txt.setText(string);
+//                }
+//            });
+            Gson gson = new Gson();
+            IState state = gson.fromJson(data, IState.class);
+            updateState(state);
 
-                    Gson gson = new Gson();
-                    IState state = gson.fromJson(data, IState.class);
-                    //Log.d("Statemachine", state.toString());
-                    ArrayList<IProduct> products = state.getProducts();
 
-                    String string = "";
-                    for (IProduct p : products) {
-                        string += p.getName() + "\n";
-                    }
-
-
-                    _txt.setText(string);
-                }
-            });
-
-
-            Toast.makeText(mContext, "Data received", Toast.LENGTH_SHORT).show();
         }
+
     }
 }
