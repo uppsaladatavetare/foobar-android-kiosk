@@ -107,7 +107,10 @@ public class CartFragment extends Fragment {
         return "<script src=\"https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js\"></script>" +
                 "<script src=\"file:///android_asset/thunderpush.js\"></script>" +
                 "<script> Thunder.connect('" + a.getString(R.string.thunderpush_host) + "', '" + a.getString(R.string.thunderpush_client_key) + "', ['products', 'cards', 'state'], {log: true}); \n" +
-                "Thunder.listen(function(message) { Android.parseData(JSON.stringify(message)); }); </script>";
+                    "Thunder.listen(function(data) { " +
+                        "if (data.channel === \"state\") Android.parseNewState(data.payload);" +
+                        "if (data.channel === \"cards\") Android.parseNewCard(data.payload);" +
+                        "if (data.channel === \"products\") Android.parseNewProduct(data.payload); }); </script>";
     }
 
 
@@ -154,7 +157,7 @@ public class CartFragment extends Fragment {
         }
         /** Show a toast from the web page */
         @JavascriptInterface
-        public void parseData(final String data) {
+        public void parseNewState(final String data) {
 
             Log.d("Cart - WebAppInterface", data);
 //            getActivity().runOnUiThread(new Runnable() {
@@ -182,5 +185,14 @@ public class CartFragment extends Fragment {
 
         }
 
+        @JavascriptInterface
+        public void parseNewCard(final String data){
+
+        }
+
+        @JavascriptInterface
+        public void parseNewProduct(final String data){
+
+        }
     }
 }

@@ -218,14 +218,16 @@ var Thunder = new function() {
 
             if (that.onmessage) that.onmessage.call(that, e);
 
-            try {
-                // try to parse the message as json
-                var json_data = JSON.parse(e.data.payload);
-                e.data = json_data;
-            }
-            catch(e) {
-                // not json, leave it as is
-            }
+            // Removed to ba able to determine what channel message came from
+
+//            try {
+//                // try to parse the message as json
+//                var json_data = JSON.parse(e.data.payload);
+//                e.data = json_data;
+//            }
+//            catch(e) {
+//                // not json, leave it as is
+//            }
 
             for (var i = 0; i < that.handlers.length; i++) {
                 that.handlers[i](e.data);
