@@ -1,7 +1,11 @@
 package nu.datavetenskap.foobarkiosk;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -28,14 +32,24 @@ public class MainActivity extends AppCompatActivity
                 //return;
             }
 
+            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            final String fragChoice = preferences.getString(getString(R.string.pref_key_implementation), null);
+            Log.d("MainActivity", "Fragmentchoice: " + fragChoice);
             // Create a new Fragment to be placed in the activity layout
-            //StoreFragment firstFragment = new StoreFragment();
-            WebViewFragment webFragment = new WebViewFragment();
-
-
             // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, webFragment).commit();
+            if (fragChoice != null) {
+                Fragment mainFragment;
+                if (fragChoice.equals("web")) {
+                    mainFragment = new WebViewFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.fragment_container, mainFragment).commit();
+                }
+                else if (fragChoice.equals("native")) {
+                    mainFragment = new StoreFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.fragment_container, mainFragment).commit();
+                }
+            }
         }
 
 
@@ -60,6 +74,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 

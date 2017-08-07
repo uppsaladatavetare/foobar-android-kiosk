@@ -1,9 +1,12 @@
 package nu.datavetenskap.foobarkiosk;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +23,11 @@ import android.webkit.WebViewClient;
  * to handle interaction events.
  */
 public class WebViewFragment extends Fragment {
+    private static final String TAG = "WebViewFragment";
 
     private OnFragmentInteractionListener mListener;
     private WebView mWebView;
+    private SharedPreferences preferences;
 
     public WebViewFragment() {
         // Required empty public constructor
@@ -34,9 +39,12 @@ public class WebViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_web_view, container, false);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final String host = preferences.getString(getString(R.string.pref_key_fookiosk_host), "");
+        Log.d(TAG, "Foo-kiosk host: " + host);
         mWebView = (WebView) v.findViewById(R.id.web_wiew_window);
         mWebView.addJavascriptInterface(new WebAppInterface(getContext().getApplicationContext()), "Android");
-        mWebView.loadUrl("http://192.168.1.21:3000");
+        mWebView.loadUrl("http://" + host);
 
         // Enable Javascript
         WebSettings webSettings = mWebView.getSettings();

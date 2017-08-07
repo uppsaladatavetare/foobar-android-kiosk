@@ -1,0 +1,57 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_web_category">
+
+        <EditTextPreference
+            android:defaultValue="@string/config_foobar_kiosk_host"
+            android:inputType="textUri"
+            android:hint="@string/pref_hint_host_text"
+            android:key="@string/pref_key_fookiosk_host"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_foo_kiosk_host" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_native_category">
+
+        <EditTextPreference
+            android:defaultValue="@string/config_foobar_api_host"
+            android:inputType="textUri"
+            android:hint="@string/pref_hint_host_text"
+            android:key="foobar_api_host"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_foo_api_host" />
+
+        <EditTextPreference
+            android:defaultValue="@string/config_foobar_api_token"
+            android:inputType="textVisiblePassword"
+            android:hint="@string/pref_hint_foo_api_token"
+            android:maxLines="1"
+            android:key="foobar_api_token"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_title_foo_api_token" />
+
+        <nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference
+            android:key="thunderclient_config"
+            android:title="@string/dialog_thunder_title" />
+
+        <MultiSelectListPreference
+            android:key="thunder_channels"
+            android:title="@string/pref_thunder_list_title"
+            android:entries="@array/pref_thunder_channel_titles"
+            android:entryValues="@array/pref_thunder_channel_values"
+            android:negativeButtonText="@null"
+            />
+
+    </PreferenceCategory>
+
+
+
+
+</PreferenceScreen>

@@ -81,7 +81,7 @@ public class StoreFragment extends Fragment {
                     @Override
                     public Map<String, String> getHeaders() throws AuthFailureError {
                         Map<String, String> headers = new HashMap<>();
-                        headers.put("Authorization", getString(R.string.foobar_api_token));
+                        headers.put("Authorization", getString(R.string.config_foobar_api_token));
                         return headers;
                     }
                 };

@@ -5,4 +5,118 @@
 
     <!-- Accessibility values -->
     <string name="product_img_desc">ProductImage</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+
+    <!-- General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_lock_settings">Lock settings with password</string>
+    <string name="settings_password">Enter password</string>
+    <string name="settings_password2">Confirm password</string>
+    <string name="dialog_pass_match">Password match</string>
+    <string name="dialog_pass_not_match">Passwords does not match</string>
+
+    <string name="pref_key_implementation">implementation</string>
+    <string name="pref_title_implementation">Choose interface</string>
+    <string-array name="pref_impl_titles">
+        <item>Access through website</item>
+        <item>Native implementation</item>
+    </string-array>
+    <string-array name="pref_impl_values">
+        <item>web</item>
+        <item>native</item>
+    </string-array>
+
+
+
+    <!-- Settings for Server config -->
+    <string name="pref_header_web">Server Configs</string>
+    <string name="pref_web_category">Web client settings</string>
+    <string name="pref_native_category">Native web settings</string>
+
+    <string name="pref_title_foo_api_host">Foobar-API server address</string>
+    <string name="pref_title_foo_api_token">API authentication token</string>
+    <string name="pref_hint_host_text">ip:port or domain name</string>
+    <string name="pref_hint_foo_api_token">Token ba961…</string>
+    <string name="pref_key_fookiosk_host">foobar_web_kiosk_host</string>
+    <string name="pref_title_foo_kiosk_host">Foobar-Kiosk client address</string>
+
+    <string name="dialog_thunder_title">Set up Thunderpush client</string>
+    <string name="dialog_thunder_hint_uri">Hostname</string>
+    <string name="dialog_thunder_hint_public">Public key</string>
+    <string name="dialog_thunder_hint_secret">Secret key</string>
+    <string name="pref_thunder_list_title">Thunderpush channels</string>
+    <string-array name="pref_thunder_channel_titles">
+        <item>Products from barcode scanner</item>
+        <item>Accounts from nfc-card reader</item>
+        <item>States from external kiosks</item>
+    </string-array>
+    <string-array name="pref_thunder_channel_values">
+        <item>products</item>
+        <item>cards</item>
+        <item>state</item>
+    </string-array>
+
+
+
+    <!-- Unsorted and possibly junk strings -->
+
+    <string name="pref_title_social_recommendations">Enable social recommendations</string>
+    <string name="pref_description_social_recommendations">Recommendations for people to contact
+        based on your message history
+    </string>
+
+
+    <string name="pref_default_display_name">John Smith</string>
+
+    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
+    <string-array name="pref_example_list_titles">
+        <item>Always</item>
+        <item>When possible</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="pref_example_list_values">
+        <item>1</item>
+        <item>0</item>
+        <item>-1</item>
+    </string-array>
+
+
+
+
+
+    <string-array name="list_preference_entries">
+        <item>Entry 1</item>
+        <item>Entry 2</item>
+        <item>Entry 3</item>
+    </string-array>
+
+    <string-array name="list_preference_entry_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="multi_select_list_preference_default_value" />
+
+    <string name="pref_title_system_sync_settings">System sync settings</string>
+    <string name="pref_header_data_sync">Data &amp; sync</string>
+
+    <!-- Original from HostCredentialsDialogPreference -->
+    <string name="dialog_hint_uri">Hostname</string>
+    <string name="dialog_hint_user">Username</string>
+    <string name="dialog_hint_password">Password</string>
+
+
+
+    <string name="pref_title_new_message_notifications">New message notifications</string>
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_ringtone_silent">Silent</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+
+
+
 </resources>
