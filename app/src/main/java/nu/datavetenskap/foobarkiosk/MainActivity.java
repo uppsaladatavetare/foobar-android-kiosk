@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.sumup.merchant.api.SumUpState;
+
 public class MainActivity extends AppCompatActivity
     implements WebViewFragment.OnFragmentInteractionListener {
 
@@ -19,6 +21,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SumUpState.init(this.getApplicationContext());
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -85,5 +89,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

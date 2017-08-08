@@ -1,6 +1,7 @@
 package nu.datavetenskap.foobarkiosk;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.sumup.merchant.Models.TransactionInfo;
+import com.sumup.merchant.api.SumUpAPI;
+import com.sumup.merchant.api.SumUpPayment;
+
+import java.util.UUID;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +31,9 @@ import android.webkit.WebViewClient;
  */
 public class WebViewFragment extends Fragment {
     private static final String TAG = "WebViewFragment";
+    private static final int REQUEST_CODE_LOGIN = 1;
+    private static final int REQUEST_CODE_PAYMENT = 2;
+    private static final int REQUEST_CODE_PAYMENT_SETTINGS = 3;
 
     private OnFragmentInteractionListener mListener;
     private WebView mWebView;
@@ -57,11 +67,28 @@ public class WebViewFragment extends Fragment {
 
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    private void runSumUpPayment() {
+        SumUpPayment payment = SumUpPayment.builder()
+                // mandatory parameters
+                // Please go to https://me.sumup.com/developers to get your Affiliate Key by entering the application ID of your app. (e.g. com.sumup.sdksampleapp)
+                .affiliateKey("7ca84f17-84a5-4140-8df6-6ebeed8540fc") // Example key from SumUp code example
+                .productAmount(1.12)
+                .currency(SumUpPayment.Currency.SEK)
+                // optional: add details
+                .productTitle("Foobar kiosk")
+                .receiptEmail("customer@mail.com")
+                .receiptSMS("+3531234567890")
+                // optional: Add metadata
+                .addAdditionalInfo("Billys pizza", "13 kr")
+                .addAdditionalInfo("From", "Paris")
+                .addAdditionalInfo("To", "Berlin")
+                // optional: foreign transaction ID, must be unique!
+                .foreignTransactionId(UUID.randomUUID().toString()) // can not exceed 128 chars
+                .build();
+
+        SumUpAPI.openPaymentActivity(getActivity(), payment, REQUEST_CODE_PAYMENT);
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -109,6 +136,49 @@ public class WebViewFragment extends Fragment {
         @JavascriptInterface
         public void parseNewState(final String data) {
 
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case REQUEST_CODE_LOGIN:
+                if (data != null) {
+                    Bundle extra = data.getExtras();
+                    //mResultCode.setText("Result code: " + extra.getInt(SumUpAPI.Response.RESULT_CODE));
+                    //mResultMessage.setText("Message: " + extra.getString(SumUpAPI.Response.MESSAGE));
+                }
+                break;
+
+            case REQUEST_CODE_PAYMENT:
+                if (data != null) {
+                    Bundle extra = data.getExtras();
+
+                    //mResultCode.setText("Result code: " + extra.getInt(SumUpAPI.Response.RESULT_CODE));
+                    //mResultMessage.setText("Message: " + extra.getString(SumUpAPI.Response.MESSAGE));
+
+                    String txCode = extra.getString(SumUpAPI.Response.TX_CODE);
+                    //mTxCode.setText(txCode == null ? "" : "Transaction Code: " + txCode);
+
+                    boolean receiptSent = extra.getBoolean(SumUpAPI.Response.RECEIPT_SENT);
+                    //mReceiptSent.setText("Receipt sent: " + receiptSent);
+
+                    TransactionInfo transactionInfo = extra.getParcelable(SumUpAPI.Response.TX_INFO);
+                    //mTxInfo.setText(transactionInfo == null ? "" : "Transaction Info : " + transactionInfo);
+                }
+                break;
+
+            case REQUEST_CODE_PAYMENT_SETTINGS:
+                if (data != null) {
+                    Bundle extra = data.getExtras();
+                    //mResultCode.setText("Result code: " + extra.getInt(SumUpAPI.Response.RESULT_CODE));
+                    //mResultMessage.setText("Message: " + extra.getString(SumUpAPI.Response.MESSAGE));
+                }
+                break;
+
+            default:
+                break;
         }
     }
 }
