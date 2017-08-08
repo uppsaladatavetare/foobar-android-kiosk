@@ -20,18 +20,25 @@ public class ThunderClient {
     private final String API_VERSION = "1.0.0";
     private final String API_URL = "/api/";
     private String host;
-    private int port;
+    //private int port;
     private String hosturl;
     private String apikey;
     private String apisecret;
 
-    public ThunderClient(String host, int port, String apikey, String apisecret) {
+    public ThunderClient(String host, String apiKey, String apiSecret) {
         this.host = host;
-        this.port = port;
-        this.apikey = apikey;
-        this.apisecret = apisecret;
-        this.hosturl = "http://" + this.host + ":" + this.port;
+        this.apikey = apiKey;
+        this.apisecret = apiSecret;
+        this.hosturl = this.host;
     }
+
+//    public ThunderClient(String host, int port, String apikey, String apisecret) {
+//        this.host = host;
+//        this.port = port;
+//        this.apikey = apikey;
+//        this.apisecret = apisecret;
+//        this.hosturl = "http://" + this.host + ":" + this.port;
+//    }
 
     public String getUserCount() throws IOException {
         return makeRequest("GET", makeUrl("users"));

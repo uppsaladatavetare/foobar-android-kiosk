@@ -3,7 +3,6 @@ package nu.datavetenskap.foobarkiosk;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -12,13 +11,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.sumup.merchant.api.SumUpState;
 
 public class MainActivity extends AppCompatActivity implements
         WebViewFragment.OnFragmentInteractionListener,
-        CartFragment.OnFragmentInteractionListener {
+        CartFragment.OnCartInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onCartInteraction(Uri uri) {
 
     }
 }

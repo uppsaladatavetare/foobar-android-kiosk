@@ -1,9 +1,10 @@
 package nu.datavetenskap.foobarkiosk;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,17 +23,19 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.models.IProduct;
 import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
+import nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference;
 
 /**
  * A fragment with a Google +1 button.
  * Activities that contain this fragment must implement the
- * {@link CartFragment.OnFragmentInteractionListener} interface
+ * {@link OnCartInteractionListener} interface
  * to handle interaction events.
  */
 public class CartFragment extends Fragment {
 
 
-    private OnFragmentInteractionListener mListener;
+    private OnCartInteractionListener mListener;
+    private SharedPreferences preferences;
     private IState activeState;
 
     @Bind(R.id.sidebar_text_view) TextView _txt;
@@ -53,11 +56,13 @@ public class CartFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
+        preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final String host = preferences.getString(ThunderClientDialogPreference.PREF_IP, "");
+        final String clientKey = preferences.getString(ThunderClientDialogPreference.PREF_PUBLIC, "");
 
         WebView.setWebContentsDebuggingEnabled(true);
-
-
-        _web.loadDataWithBaseURL("file:///android_asset/", webCode(), "text/html", "UTF-8", null);
+        Log.d("CartFragment", "ThunderHost: " + host);
+        _web.loadDataWithBaseURL("file:///android_asset/", webCode(host, clientKey), "text/html", "UTF-8", null);
 
         WebSettings webSettings = _web.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -97,16 +102,15 @@ public class CartFragment extends Fragment {
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onCartInteraction(uri);
         }
     }
 
 
-    private String webCode() {
-        Activity a = getActivity();
+    private String webCode(String host, String clientKey) {
         return "<script src=\"https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js\"></script>" +
                 "<script src=\"file:///android_asset/thunderpush.js\"></script>" +
-                "<script> Thunder.connect('" + a.getString(R.string.thunderpush_host) + "', '" + a.getString(R.string.thunderpush_client_key) + "', ['products', 'cards', 'state'], {log: true}); \n" +
+                "<script> Thunder.connect('" + host + "', '" + clientKey + "', ['products', 'cards', 'state'], {log: true}); \n" +
                     "Thunder.listen(function(data) { " +
                         "if (data.channel === \"state\") Android.parseNewState(data.payload);" +
                         "if (data.channel === \"cards\") Android.parseNewCard(data.payload);" +
@@ -125,20 +129,20 @@ public class CartFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    interface OnFragmentInteractionListener {
+    interface OnCartInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onCartInteraction(Uri uri);
 
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnCartInteractionListener) {
+            mListener = (OnCartInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnCartInteractionListener");
         }
     }
 

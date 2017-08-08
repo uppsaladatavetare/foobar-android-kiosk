@@ -21,9 +21,9 @@
             android:defaultValue="@string/config_foobar_api_host"
             android:inputType="textUri"
             android:hint="@string/pref_hint_host_text"
-            android:key="foobar_api_host"
+            android:key="@string/pref_key_fooapi_host"
             android:maxLines="1"
-            android:selectAllOnFocus="true"
+            android:selectAllOnFocus="false"
             android:singleLine="true"
             android:title="@string/pref_title_foo_api_host" />
 
@@ -32,7 +32,7 @@
             android:inputType="textVisiblePassword"
             android:hint="@string/pref_hint_foo_api_token"
             android:maxLines="1"
-            android:key="foobar_api_token"
+            android:key="@string/pref_key_fooapi_auth_token"
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/pref_title_foo_api_token" />

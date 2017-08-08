@@ -25,12 +25,13 @@ public class ProductGridAdapter extends ArrayAdapter<Product> {
 
     private Context mContext;
     private ImageLoader mImageLoader;
-    private final String url = "http://10.0.2.2:8000";
+    private String URL;
 
-    public ProductGridAdapter(Context c, ArrayList<Product> products) {
+    public ProductGridAdapter(Context c, ArrayList<Product> products, String apiURL) {
         super(c, R.layout.product_grid_layout, products);
         mContext = c;
         mImageLoader = VolleySingleton.getInstance(c.getApplicationContext()).getImageLoader();
+        URL  = apiURL;
     }
 
 
@@ -46,7 +47,10 @@ public class ProductGridAdapter extends ArrayAdapter<Product> {
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
             holder._name.setText(product.getName());
-            holder._img.setImageUrl(url + product.getImage(), mImageLoader);
+            String imgURL = product.getImage();
+            if (imgURL != null) {
+                holder._img.setImageUrl(URL + imgURL, mImageLoader);
+            }
         }
 
         return convertView;

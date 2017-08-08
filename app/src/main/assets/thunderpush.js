@@ -112,7 +112,8 @@ var Thunder = new function() {
             this.options[attr] = options[attr];
         }
 
-        this.server = this.options.protocol + "://" + server + "/connect";
+        //this.server = this.options.protocol + "://" + server + "/connect";
+        this.server = server + "/connect";
         this.user = this.options.user;
         this.makeConnection();
 

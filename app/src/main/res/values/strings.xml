@@ -19,7 +19,6 @@
     <string name="dialog_pass_match">Password match</string>
     <string name="dialog_pass_not_match">Passwords does not match</string>
 
-    <string name="pref_key_implementation">implementation</string>
     <string name="pref_title_implementation">Choose interface</string>
     <string-array name="pref_impl_titles">
         <item>Access through website</item>
@@ -41,11 +40,11 @@
     <string name="pref_title_foo_api_token">API authentication token</string>
     <string name="pref_hint_host_text">ip:port or domain name</string>
     <string name="pref_hint_foo_api_token">Token ba961…</string>
-    <string name="pref_key_fookiosk_host">foobar_web_kiosk_host</string>
     <string name="pref_title_foo_kiosk_host">Foobar-Kiosk client address</string>
 
     <string name="dialog_thunder_title">Set up Thunderpush client</string>
-    <string name="dialog_thunder_hint_uri">Hostname</string>
+    <string name="dialog_thunder_hint_ip">Hostname</string>
+    <string name="dialog_thunder_hint_port">Port</string>
     <string name="dialog_thunder_hint_public">Public key</string>
     <string name="dialog_thunder_hint_secret">Secret key</string>
     <string name="pref_thunder_list_title">Thunderpush channels</string>

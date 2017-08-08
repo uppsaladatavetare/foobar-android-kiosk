@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_key_implementation">implementation</string>
+
+    <string name="pref_key_fooapi_auth_token">foobar_api_token</string>
+    <string name="pref_key_fooapi_host">foobar_api_host</string>
+    <string name="pref_key_fookiosk_host">foobar_web_kiosk_host</string>
+
+</resources>

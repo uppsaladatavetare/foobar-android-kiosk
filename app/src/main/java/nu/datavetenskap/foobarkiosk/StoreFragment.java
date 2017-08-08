@@ -1,7 +1,9 @@
 package nu.datavetenskap.foobarkiosk;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,15 +27,18 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import nu.datavetenskap.foobarkiosk.Settings.BuildConfig;
 import nu.datavetenskap.foobarkiosk.adapters.ProductGridAdapter;
 import nu.datavetenskap.foobarkiosk.models.Product;
+import nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class StoreFragment extends Fragment {
 
+    private static String API_HOST;
+    private static String API_AUTH;
+    private ThunderClient thunderC;
     ProductGridAdapter productGrid;
     RequestQueue queue;
 
@@ -49,8 +54,15 @@ public class StoreFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_store, container, false);
 
         ButterKnife.bind(this, view);
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        API_AUTH = pref.getString(getString(R.string.pref_key_fooapi_host), "");
+        API_AUTH = pref.getString(getString(R.string.pref_key_fooapi_auth_token), "");
+        thunderC = new ThunderClient(pref.getString(ThunderClientDialogPreference.PREF_IP, ""),
+                pref.getString(ThunderClientDialogPreference.PREF_PUBLIC, ""),
+                pref.getString(ThunderClientDialogPreference.PREF_SECRET, ""));
 
-        productGrid = new ProductGridAdapter(this.getContext(), new ArrayList<Product>());
+        productGrid = new ProductGridAdapter(this.getContext(), new ArrayList<Product>(),
+                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
 
         _grid.setAdapter(productGrid);
 
@@ -59,37 +71,15 @@ public class StoreFragment extends Fragment {
 
         // Instantiate a RequestQueue from the Volley Singleton
         queue = VolleySingleton.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
-        final String url = "http://10.0.2.2:8000/api/products/";
+
 
         _btn.setOnClickListener(new  View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //updateState();
-
-                StringRequest stringReq = new StringRequest(Request.Method.GET,
-                        url,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                addAllProducts(response);
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.e("VolleyError", error.toString());
-                            }
-                        }
-                ) {
-                    @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
-                        Map<String, String> headers = new HashMap<>();
-                        headers.put("Authorization", getActivity().getString(R.string.foobar_api_token));
-                        return headers;
-                    }
-                };
-                queue.add(stringReq);
+                getProductList();
+                //retrieveProductFromBarcode();
 
             }
         });
@@ -116,10 +106,9 @@ public class StoreFragment extends Fragment {
 
                 String[] stateTest = {"{\"state\":{\"account\":{},\"products\":{\"products\":[{\"code\":\"7310500088853\",\"selected\":false,\"loading\":false,\"id\":\"e963428a-d719-422b-8d6e-5c062fe822e3\",\"name\":\"Bilys pizza\",\"qty\":1,\"price\":13,\"image\":\"http://localhost:7331/localhost:8000/media/product/7310500088853.png\"},{\"code\":\"7611612221351\",\"selected\":false,\"loading\":false,\"id\":\"4cd81a41-4e13-4b63-b833-da59dfe0faeb\",\"name\":\"Pepsi Max Ginger\",\"qty\":1,\"price\":7,\"image\":\"http://localhost:7331/localhost:8000null\"},{\"code\":\"7340083438684\",\"selected\":false,\"loading\":false,\"id\":\"7f5b3961-3654-40ad-9cea-fe0f35eb926c\",\"name\":\"Delicatoboll\",\"qty\":1,\"price\":6,\"image\":\"http://localhost:7331/localhost:8000/media/product/7340083438684.png\"}],\"page\":0,\"maxPage\":0},\"purchase\":{\"state\":\"ONGOING\"}}}"};
 
-                ThunderClient tc = new ThunderClient("192.168.1.21", 8080, getString(R.string.thunderpush_client_key), getString(R.string.thunderpush_secret_key));
 
                 try {
-                    tc.sendMessageToChannel("state", stateTest);
+                    thunderC.sendMessageToChannel("state", stateTest);
                 } catch (IOException e) {
                     Log.e("StateUpdater", "Update state failed");
                     e.printStackTrace();
@@ -135,15 +124,42 @@ public class StoreFragment extends Fragment {
         connectionThread.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-
-    private void addProductToCart() {
-
-
-
-
+    private void getProductList() {
+        final String url = API_HOST + "/api/products/";
 
         StringRequest stringReq = new StringRequest(Request.Method.GET,
-                "http://10.0.2.2:8000/api/products/?code=7310500088853",
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        addAllProducts(response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("VolleyError", error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", API_AUTH);
+                return headers;
+            }
+        };
+        queue.add(stringReq);
+    }
+
+    private void retrieveProductFromBarcode() {
+
+        final String barcode = "7310500088853";
+        final String url = API_HOST + "/api/products/?code=" + barcode;
+
+        StringRequest stringReq = new StringRequest(Request.Method.GET,
+                url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -161,7 +177,7 @@ public class StoreFragment extends Fragment {
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
-                headers.put("Authorization", getActivity().getString(R.string.foobar_api_token));
+                headers.put("Authorization", API_AUTH);
                 return headers;
             }
         };

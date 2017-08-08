@@ -13,11 +13,12 @@ import nu.datavetenskap.foobarkiosk.R;
 
 public class ThunderClientDialogPreference extends DialogPreference {
     private static final String TAG = "ThunderclientPrefs";
-    private static final String HOST_PREF = "thunder_host";
-    private static final String PUBLIC_KEY_PREF = "thunder_public_key";
-    private static final String SECRET_KEY_PREF = "thunder_secret_key";
+    public static final String PREF_IP = "thunder_ip";
+    public static final String PREF_PORT = "thunder_port";
+    public static final String PREF_PUBLIC = "thunder_public_key";
+    public static final String PREF_SECRET = "thunder_secret_key";
 
-    private EditText hostText, publicText, secretText;
+    private EditText ipText, portText, publicText, secretText;
 
     public ThunderClientDialogPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -30,9 +31,11 @@ public class ThunderClientDialogPreference extends DialogPreference {
         Log.d(TAG,"onBindDialogView");
 
         SharedPreferences sp = getSharedPreferences();
-        hostText.setText(sp.getString(HOST_PREF, ""));
-        publicText.setText(sp.getString(PUBLIC_KEY_PREF, ""));
-        secretText.setText(sp.getString(SECRET_KEY_PREF, ""));
+        ipText.setText(sp.getString(PREF_IP, "http://"));
+        final Integer port = sp.getInt(PREF_PORT, 0);
+        portText.setText(port.toString());
+        publicText.setText(sp.getString(PREF_PUBLIC, ""));
+        secretText.setText(sp.getString(PREF_SECRET, ""));
     }
 
     @Override
@@ -41,7 +44,8 @@ public class ThunderClientDialogPreference extends DialogPreference {
         // http://alexfu.tumblr.com/post/23683149440/android-dev-custom-dialogpreference
         Log.d(TAG,"onCreateDialogView");
         View root = super.onCreateDialogView();
-        hostText = (EditText) root.findViewById(R.id.thunder_host);
+        ipText = (EditText) root.findViewById(R.id.thunder_ip);
+        portText = (EditText) root.findViewById(R.id.thunder_port);
         publicText = (EditText) root.findViewById(R.id.thunder_public);
         secretText = (EditText) root.findViewById(R.id.thunder_secret);
         return root;
@@ -54,9 +58,10 @@ public class ThunderClientDialogPreference extends DialogPreference {
             Log.d(TAG,"Clicked Save");
             SharedPreferences sp = getSharedPreferences();
             SharedPreferences.Editor editor = sp.edit();
-            editor.putString(HOST_PREF, hostText.getText().toString());
-            editor.putString(PUBLIC_KEY_PREF, publicText.getText().toString());
-            editor.putString(SECRET_KEY_PREF, secretText.getText().toString());
+            editor.putString(PREF_IP, ipText.getText().toString());
+            editor.putInt(PREF_PORT, Integer.valueOf(portText.getText().toString()));
+            editor.putString(PREF_PUBLIC, publicText.getText().toString());
+            editor.putString(PREF_SECRET, secretText.getText().toString());
             editor.apply();
         }
         else {
