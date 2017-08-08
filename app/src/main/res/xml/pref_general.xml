@@ -1,0 +1,65 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="general_prefs_screen">
+
+
+    <nu.datavetenskap.foobarkiosk.preferences.PasswordDialogPreference
+        android:key="password_credentials"
+        android:title="@string/pref_title_lock_settings"
+        android:positiveButtonText="Clear"/>
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <ListPreference
+        android:entries="@array/pref_impl_titles"
+        android:entryValues="@array/pref_impl_values"
+        android:key="@string/pref_key_implementation"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_implementation" />
+
+
+
+
+    <!--
+
+
+    <nu.datavetenskap.foobarkiosk.preferences.HostCredentialsDialogPreference
+        android:key="dialog_credentials"
+        android:title="Server Address and Login"
+        android:summary="Set Host, Username and Password" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="settings_locked"
+        android:title="@string/pref_title_lock_settings" />
+    -->
+
+    <!-- NOTE: EditTextPreference accepts EditText attributes. -->
+    <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
+    <!--
+    <EditTextPreference
+        android:defaultValue="@string/pref_default_display_name"
+        android:inputType="textPassword"
+        android:key="example_text"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_foo_api_host" />
+    -->
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <!--
+    <ListPreference
+        android:defaultValue="-1"
+        android:entries="@array/pref_example_list_titles"
+        android:entryValues="@array/pref_example_list_values"
+        android:key="example_list"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_add_friends_to_messages" />
+    -->
+
+</PreferenceScreen>

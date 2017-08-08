@@ -25,6 +25,7 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import nu.datavetenskap.foobarkiosk.Settings.BuildConfig;
 import nu.datavetenskap.foobarkiosk.adapters.ProductGridAdapter;
 import nu.datavetenskap.foobarkiosk.models.Product;
 

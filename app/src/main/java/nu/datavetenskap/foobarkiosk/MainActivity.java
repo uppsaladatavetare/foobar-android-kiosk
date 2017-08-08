@@ -1,22 +1,31 @@
 package nu.datavetenskap.foobarkiosk;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.sumup.merchant.api.SumUpState;
+
 public class MainActivity extends AppCompatActivity implements
+        WebViewFragment.OnFragmentInteractionListener,
         CartFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SumUpState.init(this.getApplicationContext());
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -28,27 +37,30 @@ public class MainActivity extends AppCompatActivity implements
                 //return;
             }
 
+            final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            final String fragChoice = preferences.getString(getString(R.string.pref_key_implementation), null);
+            Log.d("MainActivity", "Fragmentchoice: " + fragChoice);
             // Create a new Fragment to be placed in the activity layout
-            StoreFragment firstFragment = new StoreFragment();
-
-
             // Add the fragment to the 'fragment_container' FrameLayout
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, firstFragment).commit();
+            if (fragChoice != null) {
+                Fragment mainFragment;
+                if (fragChoice.equals("web")) {
+                    mainFragment = new WebViewFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.fragment_container, mainFragment).commit();
+                }
+                else if (fragChoice.equals("native")) {
+                    mainFragment = new StoreFragment();
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.fragment_container, mainFragment).commit();
+                }
+            }
         }
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     @Override
@@ -67,10 +79,22 @@ public class MainActivity extends AppCompatActivity implements
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
