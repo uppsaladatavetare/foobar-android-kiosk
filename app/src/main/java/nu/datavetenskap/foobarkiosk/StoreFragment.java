@@ -17,10 +17,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +44,8 @@ public class StoreFragment extends Fragment {
     ProductGridAdapter productGrid;
     RequestQueue queue;
 
-    @Bind(R.id.btn_click) Button _btn;
+    @Bind(R.id.btn_get_products) Button _btnProducts;
+    @Bind(R.id.btn_send_state) Button _btnState;
     @Bind(R.id.grid_view) GridView _grid;
 
     public StoreFragment() {
@@ -54,8 +57,8 @@ public class StoreFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_store, container, false);
 
         ButterKnife.bind(this, view);
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        API_AUTH = pref.getString(getString(R.string.pref_key_fooapi_host), "");
+        final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        API_HOST = pref.getString(getString(R.string.pref_key_fooapi_host), "");
         API_AUTH = pref.getString(getString(R.string.pref_key_fooapi_auth_token), "");
         thunderC = new ThunderClient(pref.getString(ThunderClientDialogPreference.PREF_IP, ""),
                 pref.getString(ThunderClientDialogPreference.PREF_PUBLIC, ""),
@@ -73,17 +76,27 @@ public class StoreFragment extends Fragment {
         queue = VolleySingleton.getInstance(this.getContext().getApplicationContext()).getRequestQueue();
 
 
-        _btn.setOnClickListener(new  View.OnClickListener() {
+        _btnProducts.setOnClickListener(new  View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                //updateState();
                 getProductList();
                 //retrieveProductFromBarcode();
 
             }
         });
 
+        _btnState.setOnClickListener(new  View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //updateStateWithThunderClient();
+                updateStateWithVolley(pref.getString(ThunderClientDialogPreference.PREF_IP, ""),
+                        pref.getString(ThunderClientDialogPreference.PREF_PUBLIC, ""),
+                        pref.getString(ThunderClientDialogPreference.PREF_SECRET, ""));
+
+            }
+        });
 
         return view;
     }
@@ -97,7 +110,7 @@ public class StoreFragment extends Fragment {
         productGrid.notifyDataSetChanged();
     }
 
-    private void updateState() {
+    private void updateStateWithThunderClient() {
 
         AsyncTask<Void, Void, Boolean> connectionThread = new AsyncTask<Void, Void, Boolean>() {
 
@@ -197,6 +210,50 @@ public class StoreFragment extends Fragment {
 //        }
 
 
+    }
+
+    private void updateStateWithVolley(String thunderhost, String apiKey, final String secretKey) {
+
+        final String channel = "/api/1.0.0/" + apiKey + "/channels/state/";
+
+        final String stateTest = "{\"state\":{\"account\":{},\"products\":{\"products\":[{\"code\":\"7310500088853\",\"selected\":false,\"loading\":false,\"id\":\"e963428a-d719-422b-8d6e-5c062fe822e3\",\"name\":\"Bilys pizza\",\"qty\":1,\"price\":13,\"image\":\"http://localhost:7331/localhost:8000/media/product/7310500088853.png\"},{\"code\":\"7611612221351\",\"selected\":false,\"loading\":false,\"id\":\"4cd81a41-4e13-4b63-b833-da59dfe0faeb\",\"name\":\"Pepsi Max Ginger\",\"qty\":1,\"price\":7,\"image\":\"http://localhost:7331/localhost:8000null\"},{\"code\":\"7340083438684\",\"selected\":false,\"loading\":false,\"id\":\"7f5b3961-3654-40ad-9cea-fe0f35eb926c\",\"name\":\"Delicatoboll\",\"qty\":1,\"price\":6,\"image\":\"http://localhost:7331/localhost:8000/media/product/7340083438684.png\"}],\"page\":0,\"maxPage\":0},\"purchase\":{\"state\":\"ONGOING\"}}}";
+
+        StringRequest stringReq = new StringRequest(Request.Method.POST,
+                thunderhost + channel,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("StringRequest", response);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("VolleyError", error.toString());
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("X-Thunder-Secret-Key", secretKey);
+                return headers;
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+
+                try {
+                    return stateTest.getBytes("utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", stateTest, "utf-8");
+                    return null;
+
+                }
+            }
+        };
+        queue.add(stringReq);
     }
 
 

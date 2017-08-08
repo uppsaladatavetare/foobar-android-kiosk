@@ -54,7 +54,7 @@ public class WebViewFragment extends Fragment {
         Log.d(TAG, "Foo-kiosk host: " + host);
         mWebView = (WebView) v.findViewById(R.id.web_wiew_window);
         mWebView.addJavascriptInterface(new WebAppInterface(getContext().getApplicationContext()), "Android");
-        mWebView.loadUrl("http://" + host);
+        mWebView.loadUrl(host);
 
         // Enable Javascript
         WebSettings webSettings = mWebView.getSettings();

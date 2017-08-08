@@ -164,27 +164,16 @@ public class CartFragment extends Fragment {
         public void parseNewState(final String data) {
 
             Log.d("Cart - WebAppInterface", data);
-//            getActivity().runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//
-//                    Gson gson = new Gson();
-//                    IState state = gson.fromJson(data, IState.class);
-//
-//                    ArrayList<IProduct> products = state.getProducts();
-//
-//                    String string = "";
-//                    for (IProduct p : products) {
-//                        string += p.getName() + "\n";
-//                    }
-//
-//
-//                    _txt.setText(string);
-//                }
-//            });
-            Gson gson = new Gson();
-            IState state = gson.fromJson(data, IState.class);
-            updateState(state);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    Gson gson = new Gson();
+                    IState state = gson.fromJson(data, IState.class);
+                    updateState(state);
+                }
+            });
+
 
 
         }
