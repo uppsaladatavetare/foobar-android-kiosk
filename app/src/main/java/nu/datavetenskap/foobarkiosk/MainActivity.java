@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements
                 //return;
             }
 
+            FoobarAPI.startSingleton(getApplicationContext());
             final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             final String fragChoice = preferences.getString(getString(R.string.pref_key_implementation), null);
             Log.d("MainActivity", "Fragmentchoice: " + fragChoice);
