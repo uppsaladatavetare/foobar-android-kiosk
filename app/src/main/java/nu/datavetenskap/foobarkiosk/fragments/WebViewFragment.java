@@ -1,4 +1,4 @@
-package nu.datavetenskap.foobarkiosk;
+package nu.datavetenskap.foobarkiosk.fragments;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +21,8 @@ import com.sumup.merchant.api.SumUpAPI;
 import com.sumup.merchant.api.SumUpPayment;
 
 import java.util.UUID;
+
+import nu.datavetenskap.foobarkiosk.R;
 
 
 /**

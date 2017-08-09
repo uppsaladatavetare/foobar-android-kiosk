@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nu.datavetenskap.foobarkiosk.StoreFragment"
+    tools:context="nu.datavetenskap.foobarkiosk.fragments.StoreFragment"
     >
 
     <Button
@@ -50,7 +50,7 @@
 
         <fragment
             android:id="@+id/store_sidebar"
-            android:name="nu.datavetenskap.foobarkiosk.CartFragment"
+            android:name="nu.datavetenskap.foobarkiosk.fragments.CartFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="3"

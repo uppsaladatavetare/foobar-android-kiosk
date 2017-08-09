@@ -1,4 +1,4 @@
-package nu.datavetenskap.foobarkiosk;
+package nu.datavetenskap.foobarkiosk.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,6 +19,8 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import nu.datavetenskap.foobarkiosk.FoobarAPI;
+import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.adapters.ProductGridAdapter;
 import nu.datavetenskap.foobarkiosk.models.Product;
 

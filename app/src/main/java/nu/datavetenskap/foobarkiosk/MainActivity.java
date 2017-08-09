@@ -14,6 +14,10 @@ import android.view.MenuItem;
 
 import com.sumup.merchant.api.SumUpState;
 
+import nu.datavetenskap.foobarkiosk.fragments.CartFragment;
+import nu.datavetenskap.foobarkiosk.fragments.StoreFragment;
+import nu.datavetenskap.foobarkiosk.fragments.WebViewFragment;
+
 public class MainActivity extends AppCompatActivity implements
         WebViewFragment.OnFragmentInteractionListener,
         CartFragment.OnCartInteractionListener {
@@ -35,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements
                 //return;
             }
 
-            FoobarAPI.startSingleton(getApplicationContext());
             final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             final String fragChoice = preferences.getString(getString(R.string.pref_key_implementation), null);
             Log.d("MainActivity", "Fragmentchoice: " + fragChoice);
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements
                             .add(R.id.fragment_container, mainFragment).commit();
                 }
                 else if (fragChoice.equals("native")) {
+                    FoobarAPI.startSingleton(getApplicationContext());
                     mainFragment = new StoreFragment();
                     getSupportFragmentManager().beginTransaction()
                             .add(R.id.fragment_container, mainFragment).commit();

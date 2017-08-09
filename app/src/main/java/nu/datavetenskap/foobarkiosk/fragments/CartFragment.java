@@ -1,4 +1,4 @@
-package nu.datavetenskap.foobarkiosk;
+package nu.datavetenskap.foobarkiosk.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.models.IProduct;
 import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
 import nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference;
@@ -129,7 +130,7 @@ public class CartFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    interface OnCartInteractionListener {
+    public interface OnCartInteractionListener {
         // TODO: Update argument type and name
         void onCartInteraction(Uri uri);
 
