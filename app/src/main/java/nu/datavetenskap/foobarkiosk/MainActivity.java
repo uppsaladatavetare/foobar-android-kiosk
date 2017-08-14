@@ -108,7 +108,18 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onAccountInteraction(Uri uri) {
+    public void onAccountProfileDialogOpen() {
+        CartFragment frag = (CartFragment) getSupportFragmentManager().findFragmentById(R.id.store_sidebar);
+        if (frag != null) {
+            frag.sendProfileState();
+        }
+    }
 
+    @Override
+    public void onAccountProfileDialogDismissed() {
+        CartFragment frag = (CartFragment) getSupportFragmentManager().findFragmentById(R.id.store_sidebar);
+        if (frag != null) {
+            frag.returnFromProfile();
+        }
     }
 }

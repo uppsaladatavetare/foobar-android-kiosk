@@ -43,6 +43,7 @@ public class CartFragment extends Fragment {
     private OnCartInteractionListener mListener;
     private SharedPreferences preferences;
     private IState activeState;
+    private String purchaseStateCache;
 
     @Bind(R.id.sidebar_text_view) TextView _txt;
     @Bind(R.id.web_viewer) WebView _web;
@@ -182,6 +183,17 @@ public class CartFragment extends Fragment {
                         "if (data.channel === \"products\") Android.parseNewProduct(data.payload); }); </script>";
     }
 
+
+    public void sendProfileState() {
+        purchaseStateCache = activeState.getPurchaseState();
+        activeState.setPurchaseState(PurchaseState.PROFILE);
+        FoobarAPI.sendStateToThunderpush(activeState);
+    }
+
+
+    public void returnFromProfile() {
+        activeState.setPurchaseState(purchaseStateCache);
+    }
 
 
     /**

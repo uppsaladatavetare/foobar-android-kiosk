@@ -1,8 +1,12 @@
 package nu.datavetenskap.foobarkiosk.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.net.Uri;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,7 +16,10 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import net.glxn.qrgen.android.QRCode;
 
 import java.util.Locale;
 
@@ -32,6 +39,8 @@ public class AccountFragment extends Fragment {
 
 
     private OnAccountInteractionListener mListener;
+    private SharedPreferences pref;
+    private IAccount account;
 
     @Bind(R.id.account_name) TextView _aName;
     @Bind(R.id.account_balance) TextView _aBalance;
@@ -59,7 +68,7 @@ public class AccountFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_account, container, false);
@@ -68,16 +77,52 @@ public class AccountFragment extends Fragment {
         _aName.setText(getName());
         _aBalance.setText(getBalance());
 
+        _btnProfile.setOnClickListener(new  View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                openProfileDialog();
+
+            }
+        });
+
         warnIfIncompleteAccount();
         return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    private void openProfileDialog() {
+        final String hostAPI = PreferenceManager.getDefaultSharedPreferences(getActivity()).
+                getString(getContext().getString(R.string.pref_key_fooapi_host), "");
+
+        String url = hostAPI + "/profile/" + getToken();
+        Log.d(TAG, "urls: " + url);
+
         if (mListener != null) {
-            mListener.onAccountInteraction(uri);
+            mListener.onAccountProfileDialogOpen();
+
+            AlertDialog.Builder alertadd = new AlertDialog.Builder(getActivity());
+            LayoutInflater factory = LayoutInflater.from(getActivity());
+            final View view = factory.inflate(R.layout.dialog_account_profile, null);
+            alertadd.setView(view);
+            alertadd.setTitle(getName());
+            ImageView image = (ImageView) view.findViewById(R.id.profile_qr_image);
+
+            Bitmap myBitmap = QRCode.from(url).withSize(250, 250).bitmap();
+
+            image.setImageBitmap(myBitmap);
+
+            alertadd.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    Log.d(TAG, "Dialog dismissed");
+                    mListener.onAccountProfileDialogDismissed();
+                }
+            });
+
+            alertadd.show();
         }
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -97,7 +142,6 @@ public class AccountFragment extends Fragment {
     }
 
     private String getName() {
-        Log.d(TAG, "getName: " + getArguments().getString("name"));
         return getArguments().getString("name");
     }
 
@@ -107,6 +151,10 @@ public class AccountFragment extends Fragment {
             return String.format(Locale.getDefault() ,"%d kr",(int)balance);
         else
             return String.format("%s kr", balance);
+    }
+
+    private String getToken() {
+        return getArguments().getString("token");
     }
 
     private void warnIfIncompleteAccount() {
@@ -135,6 +183,7 @@ public class AccountFragment extends Fragment {
      */
     public interface OnAccountInteractionListener {
         // TODO: Update argument type and name
-        void onAccountInteraction(Uri uri);
+        void onAccountProfileDialogOpen();
+        void onAccountProfileDialogDismissed();
     }
 }
