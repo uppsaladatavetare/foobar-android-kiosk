@@ -9,6 +9,11 @@ class ProductList {
     private int page;
     private int maxPage;
 
+    ProductList() {
+        products = new ArrayList<>();
+        page = 0;
+        maxPage = 0;
+    }
 
     @Override
     public String toString() {

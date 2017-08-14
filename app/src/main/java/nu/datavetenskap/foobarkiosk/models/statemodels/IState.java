@@ -8,7 +8,9 @@ import nu.datavetenskap.foobarkiosk.models.IProduct;
 public class IState {
     private State state;
 
-
+    public IState() {
+        state = new State();
+    }
 
     public void update(IState that) {
         state.update(that.getState());
@@ -31,10 +33,17 @@ public class IState {
         return state;
     }
 
+    public void setAccount(IAccount account) {
+        this.state.setAccount(account);
+    }
 
+    public String getPurchaseState() {
+        return state.getPurcaseState();
+    }
 
-
-
+    public void setPurchaseState(String purchaseState) {
+        state.setPurchaseState(PurchaseState.ONGOING);
+    }
 
 
     private class State {
@@ -42,6 +51,12 @@ public class IState {
         private IAccount account;
         private ProductList products;
         private PurchaseState purchase;
+
+        protected State(){
+            account = new IAccount();
+            products = new ProductList();
+            purchase = new PurchaseState();
+        }
 
         @Override
         public String toString() {
@@ -69,9 +84,23 @@ public class IState {
 
 
          private IAccount getAccount() {
-            return account;
+             if (account != null && account.isEmpty()) {
+                 account = null;
+             }
+             return account;
         }
 
+        public void setAccount(IAccount account) {
+            this.account = account;
+        }
+
+        public String getPurcaseState() {
+            return purchase.getPurcaseState();
+        }
+
+        public void setPurchaseState(String purchaseState) {
+            purchase.setPurchaseState(PurchaseState.ONGOING);
+        }
     }
 }
 

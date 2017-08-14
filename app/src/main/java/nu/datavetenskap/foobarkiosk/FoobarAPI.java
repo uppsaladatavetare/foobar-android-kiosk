@@ -12,11 +12,13 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
 import nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference;
 
 public class FoobarAPI {
@@ -28,6 +30,7 @@ public class FoobarAPI {
     private static String API_AUTH;
     private static String THUNDER_URL;
     private static String THUNDER_SECRET;
+    private static Gson gson;
 
     public static void startSingleton(Context context) {
         // Instantiate a RequestQueue from the Volley Singleton
@@ -40,6 +43,7 @@ public class FoobarAPI {
         String thunderPublic = pref.getString(ThunderClientDialogPreference.PREF_PUBLIC, "");
         THUNDER_URL = thunderHost + "/api/1.0.0/" + thunderPublic + "/channels/";
         THUNDER_SECRET = pref.getString(ThunderClientDialogPreference.PREF_SECRET, "");
+        gson = new Gson();
 
         completeSingleton = true;
     }
@@ -60,9 +64,9 @@ public class FoobarAPI {
         sendAPIRequest("/api/accounts/" + card + "/", stringRequest);
     }
 
-    public static void sendStateToThunderpush(String state) {
+    public static void sendStateToThunderpush(IState state) {
         checkCompleteness();
-        sendThunderMsgChannel(STATE, state);
+        sendThunderMsgChannel(STATE, gson.toJson(state));
 
     }
 

@@ -1,9 +1,19 @@
 package nu.datavetenskap.foobarkiosk.models.statemodels;
 
-class PurchaseState {
+public class PurchaseState {
+
+    public static transient final String WAITING = "WAITING";
+    public static transient final String ONGOING = "ONGOING";
+    public static transient final String PENDING = "PENDING";
+    public static transient final String FINALIZED = "FINALIZED";
+    public static transient final String PROFILE = "PROFILE";
 
     private String state;
-    private int cost;
+    private Integer cost;
+
+    PurchaseState() {
+        state = WAITING;
+    }
 
     /*
     Possible states:
@@ -21,4 +31,11 @@ class PurchaseState {
         this.state = that.state;
     }
 
+    public String getPurcaseState() {
+        return state;
+    }
+
+    public void setPurchaseState(String purchaseState) {
+        state = purchaseState;
+    }
 }

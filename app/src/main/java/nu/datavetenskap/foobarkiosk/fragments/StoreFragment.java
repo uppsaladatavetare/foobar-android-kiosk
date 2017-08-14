@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.adapters.ProductGridAdapter;
+import nu.datavetenskap.foobarkiosk.models.IAccount;
 import nu.datavetenskap.foobarkiosk.models.Product;
 
 /**
@@ -34,6 +35,7 @@ public class StoreFragment extends Fragment {
 
     @Bind(R.id.btn_get_products) Button _btnProducts;
     @Bind(R.id.btn_send_state) Button _btnState;
+    @Bind(R.id.btn_get_card) Button _btncard;
     @Bind(R.id.grid_view) GridView _grid;
 
     public StoreFragment() {
@@ -74,6 +76,15 @@ public class StoreFragment extends Fragment {
 
             }
         });
+        _btncard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CartFragment frag = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
+                if (frag != null) {
+                    frag.retrieveAccountFromCard("1337");
+                }
+            }
+        });
 
         return view;
     }
@@ -100,11 +111,15 @@ public class StoreFragment extends Fragment {
         });
     }
 
-    private void retrieveAccountFromCard(String card) {
+    private void retrieveAccountFromCard(final String card) {
         FoobarAPI.getAccountFromCard(card, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("StringRequest", response);
+                Gson gson = new Gson();
+                IAccount account = gson.fromJson(response, IAccount.class);
+
+                account.setCardId(card);
             }
         });
     }
@@ -133,7 +148,7 @@ public class StoreFragment extends Fragment {
         final String stateTest = "{\"state\":{\"account\":{},\"products\":{\"products\":[{\"code\":\"7310500088853\",\"selected\":false,\"loading\":false,\"id\":\"e963428a-d719-422b-8d6e-5c062fe822e3\",\"name\":\"Bilys pizza\",\"qty\":1,\"price\":13,\"image\":\"http://localhost:7331/localhost:8000/media/product/7310500088853.png\"},{\"code\":\"7611612221351\",\"selected\":false,\"loading\":false,\"id\":\"4cd81a41-4e13-4b63-b833-da59dfe0faeb\",\"name\":\"Pepsi Max Ginger\",\"qty\":1,\"price\":7,\"image\":\"http://localhost:7331/localhost:8000null\"},{\"code\":\"7340083438684\",\"selected\":false,\"loading\":false,\"id\":\"7f5b3961-3654-40ad-9cea-fe0f35eb926c\",\"name\":\"Delicatoboll\",\"qty\":1,\"price\":6,\"image\":\"http://localhost:7331/localhost:8000/media/product/7340083438684.png\"}],\"page\":0,\"maxPage\":0},\"purchase\":{\"state\":\"ONGOING\"}}}";
 
         //TODO: make it so method require IState later on
-        FoobarAPI.sendStateToThunderpush(stateTest);
+        //FoobarAPI.sendStateToThunderpush(stateTest);
     }
 
 

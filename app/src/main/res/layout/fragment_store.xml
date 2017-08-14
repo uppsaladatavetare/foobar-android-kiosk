@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="nu.datavetenskap.foobarkiosk.fragments.StoreFragment"
+    android:background="@color/white"
     >
 
     <Button
@@ -26,6 +27,15 @@
         android:text="send fake state"
         />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/btn_send_state"
+        android:clickable="true"
+        android:id="@+id/btn_get_card"
+        android:text="swipe a card"/>
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -34,26 +44,28 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:orientation="horizontal"
+        android:background="@color/white_pressed"
         >
 
         <GridView
             android:id="@+id/grid_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
             android:columnWidth="236dp"
             android:numColumns="auto_fit"
             android:verticalSpacing="10dp"
             android:horizontalSpacing="10dp"
             android:stretchMode="columnWidth"
+            android:padding="10dp"
             />
 
         <fragment
             android:id="@+id/store_sidebar"
             android:name="nu.datavetenskap.foobarkiosk.fragments.CartFragment"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="3"
+            android:layout_weight="1"
             tools:layout="@layout/fragment_cart_list" />
     </LinearLayout>
 

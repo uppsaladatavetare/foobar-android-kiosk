@@ -14,13 +14,15 @@ import android.view.MenuItem;
 
 import com.sumup.merchant.api.SumUpState;
 
+import nu.datavetenskap.foobarkiosk.fragments.AccountFragment;
 import nu.datavetenskap.foobarkiosk.fragments.CartFragment;
 import nu.datavetenskap.foobarkiosk.fragments.StoreFragment;
 import nu.datavetenskap.foobarkiosk.fragments.WebViewFragment;
 
 public class MainActivity extends AppCompatActivity implements
         WebViewFragment.OnFragmentInteractionListener,
-        CartFragment.OnCartInteractionListener {
+        CartFragment.OnCartInteractionListener,
+        AccountFragment.OnAccountInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onCartInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onAccountInteraction(Uri uri) {
 
     }
 }

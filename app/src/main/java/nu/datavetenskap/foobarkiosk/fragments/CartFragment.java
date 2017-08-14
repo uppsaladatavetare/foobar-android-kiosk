@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,15 +16,19 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import com.android.volley.Response;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
+import nu.datavetenskap.foobarkiosk.models.IAccount;
 import nu.datavetenskap.foobarkiosk.models.IProduct;
 import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
+import nu.datavetenskap.foobarkiosk.models.statemodels.PurchaseState;
 import nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference;
 
 /**
@@ -41,6 +46,8 @@ public class CartFragment extends Fragment {
 
     @Bind(R.id.sidebar_text_view) TextView _txt;
     @Bind(R.id.web_viewer) WebView _web;
+    AccountFragment _acc;
+    //@Bind(R.id.account_fragment) AccountFragment _acc;
 
     public CartFragment() {
         // Required empty public constructor
@@ -72,7 +79,46 @@ public class CartFragment extends Fragment {
 
         _txt.setText("Ready for input");
 
+        activeState = new IState();
+
+        FoobarAPI.sendStateToThunderpush(activeState);
+
         return view;
+    }
+
+    public void retrieveAccountFromCard(final String card) {
+        FoobarAPI.getAccountFromCard(card, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("StringRequest", response);
+                Gson gson = new Gson();
+                IAccount account = gson.fromJson(response, IAccount.class);
+
+                account.setCardId(card);
+                updateState(account);
+            }
+        });
+    }
+
+    private void addAccountFragment(IAccount account) {
+        _acc = AccountFragment.newInstance(account);
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
+        ft.add(R.id.account_fragment, _acc).commit();
+    }
+
+    public void showAccountFragment() {
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.setCustomAnimations(android.R.anim.fade_in,
+                android.R.anim.fade_out);
+        if (_acc.isHidden()) {
+            ft.show(_acc);
+            //button.setText("Hide");
+        } else {
+            ft.hide(_acc);
+            //button.setText("Show");
+        }
+        ft.commit();
     }
 
     public void addProductToCart() {
@@ -80,8 +126,26 @@ public class CartFragment extends Fragment {
 
     }
 
+    private void updateState(IAccount account) {
+        if (activeState.getAccount() == null) {
+            activeState.setAccount(account);
+            addAccountFragment(account);
+            if (activeState.getPurchaseState().equals(PurchaseState.WAITING)) {
+                activeState.setPurchaseState(PurchaseState.ONGOING);
+            }
+            FoobarAPI.sendStateToThunderpush(activeState);
+        }
+    }
+
     private void updateState(IState newState) {
         Log.d("CartFragment", "State updated");
+
+        IAccount account = newState.getAccount();
+        if (account == null) {
+            Log.d("CartFragment", "Account is null");
+        } else {
+            addAccountFragment(account);
+        }
 
         final ArrayList<IProduct> products = newState.getProducts();
 
