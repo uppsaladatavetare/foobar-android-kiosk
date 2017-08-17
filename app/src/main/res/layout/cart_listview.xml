@@ -1,31 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/product_cart_row"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:elevation="2dp"
+    android:background="@color/white">
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/product_cart_image"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:padding="10dp"
         android:scaleType="centerCrop"
         android:contentDescription="@string/product_img_desc"
         android:src="@drawable/icon_product"/>
 
     <TextView
         android:id="@+id/product_cart_amount"
+        android:layout_toRightOf="@id/product_cart_image"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="80dp"
+        style="@style/cart_product_style"
+        android:gravity="left|center"/>
     <TextView
         android:id="@+id/product_cart_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxHeight="70dp"
-        android:maxWidth="190dp"/>
+        android:layout_toRightOf="@id/product_cart_amount"
+        android:layout_toLeftOf="@+id/product_cart_cost"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        style="@style/cart_product_style"
+        android:gravity="left|center" />
     <TextView
-        android:id="@+id/product_cart_cost"
+        android:id="@id/product_cart_cost"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="80dp"
+        style="@style/cart_product_style"
+        android:gravity="right|center" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -7,7 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -71,7 +71,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @Bind(R.id.product_cart_row) LinearLayout _row;
+        @Bind(R.id.product_cart_row) RelativeLayout _row;
         @Bind(R.id.product_cart_image) NetworkImageView _img;
         @Bind(R.id.product_cart_amount) TextView _amount;
         @Bind(R.id.product_cart_name) TextView _name;
