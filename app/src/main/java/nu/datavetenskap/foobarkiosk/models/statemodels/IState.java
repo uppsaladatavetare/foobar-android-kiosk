@@ -45,6 +45,10 @@ public class IState {
         state.setPurchaseState(PurchaseState.ONGOING);
     }
 
+    public void clearState() {
+        state.clearstate();
+    }
+
 
     private class State {
 
@@ -100,6 +104,12 @@ public class IState {
 
         public void setPurchaseState(String purchaseState) {
             purchase.setPurchaseState(PurchaseState.ONGOING);
+        }
+
+        public void clearstate() {
+            products.clear();
+            account = new IAccount();
+            purchase.setPurchaseState(PurchaseState.WAITING);
         }
     }
 }

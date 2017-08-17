@@ -26,6 +26,10 @@ class ProductList {
         return products;
     }
 
+    public void clear() {
+        products.clear();
+    }
+
 
     interface ProductListInterface {
         ArrayList<IProduct> getProducts();

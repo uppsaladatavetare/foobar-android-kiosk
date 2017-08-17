@@ -48,6 +48,7 @@ public class ProductGridAdapter extends ArrayAdapter<Product> {
             convertView.setTag(holder);
             holder._name.setText(product.getName());
             String imgURL = product.getImage();
+            holder._img.setDefaultImageResId(R.drawable.icon_product);
             if (imgURL != null) {
                 holder._img.setImageUrl(URL + imgURL, mImageLoader);
             }

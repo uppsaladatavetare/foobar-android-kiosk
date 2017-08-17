@@ -5,14 +5,33 @@ package nu.datavetenskap.foobarkiosk.models;
  */
 
 public class Product {
-    private String id;
+    protected String id;
     private String name;
     private String code;
     private String description;
     private Number price;
     private boolean active;
-    private Number qty;
+    protected int qty;
     private String image;
+
+    public Product(Product p) {
+        id = p.id;
+        name = p.name;
+        code = p.code;
+        description = p.description;
+        price = p.price;
+        active = p.active;
+        qty = 1;
+        image = p. image;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Product) {
+            return this.id.equals(((Product) obj).id);
+        }
+        return super.equals(obj);
+    }
 
     @Override
     public String toString() {
@@ -56,9 +75,8 @@ public class Product {
         return active;
     }
 
-    public Number getQty() {
+    public int getQty() {
         return qty;
     }
-
 
 }

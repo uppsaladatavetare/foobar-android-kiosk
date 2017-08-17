@@ -6,7 +6,7 @@ public class IAccount {
     private String id;
     @SerializedName("user_id")      private String userId;
     private String name;
-    private float balance;
+    private Float balance;
     private String token;
     @SerializedName("is_complete")  private Boolean isComplete;
     @SerializedName("card_id")      private String cardId;

@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements
         WebViewFragment.OnFragmentInteractionListener,
         CartFragment.OnCartInteractionListener,
         AccountFragment.OnAccountInteractionListener {
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements
 
             final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             final String fragChoice = preferences.getString(getString(R.string.pref_key_implementation), null);
-            Log.d("MainActivity", "Fragmentchoice: " + fragChoice);
+            Log.d(TAG, "Fragmentchoice: " + fragChoice);
             // Create a new Fragment to be placed in the activity layout
             // Add the fragment to the 'fragment_container' FrameLayout
             if (fragChoice != null) {

@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridView;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.google.gson.Gson;
 
@@ -31,7 +30,7 @@ import nu.datavetenskap.foobarkiosk.models.Product;
 public class StoreFragment extends Fragment {
 
     ProductGridAdapter productGrid;
-    RequestQueue queue;
+    CartFragment cartFragment;
 
     @Bind(R.id.btn_get_products) Button _btnProducts;
     @Bind(R.id.btn_send_state) Button _btnState;
@@ -54,6 +53,7 @@ public class StoreFragment extends Fragment {
 
         _grid.setAdapter(productGrid);
 
+        cartFragment = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
 
 
         _btnProducts.setOnClickListener(new  View.OnClickListener() {
@@ -62,7 +62,7 @@ public class StoreFragment extends Fragment {
 
                 getProductList();
                 //retrieveProductFromBarcode("7310500088853");
-                retrieveAccountFromCard("1337");
+                //retrieveAccountFromCard("1337");
 
             }
         });
@@ -79,16 +79,12 @@ public class StoreFragment extends Fragment {
         _btncard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CartFragment frag = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
-                if (frag != null) {
-                    frag.retrieveAccountFromCard("1337");
-                }
+                cartFragment.retrieveAccountFromCard("1337");
             }
         });
 
         return view;
     }
-
 
 
 
@@ -99,6 +95,9 @@ public class StoreFragment extends Fragment {
         productGrid.addAll(products);
 
         productGrid.notifyDataSetChanged();
+
+
+        cartFragment.addProductToCart(products[0]);
     }
 
 

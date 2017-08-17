@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +16,8 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.android.volley.Response;
 import com.google.gson.Gson;
@@ -25,8 +28,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
+import nu.datavetenskap.foobarkiosk.adapters.CartAdapter;
 import nu.datavetenskap.foobarkiosk.models.IAccount;
 import nu.datavetenskap.foobarkiosk.models.IProduct;
+import nu.datavetenskap.foobarkiosk.models.Product;
 import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
 import nu.datavetenskap.foobarkiosk.models.statemodels.PurchaseState;
 import nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference;
@@ -37,7 +42,8 @@ import nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference;
  * {@link OnCartInteractionListener} interface
  * to handle interaction events.
  */
-public class CartFragment extends Fragment {
+public class CartFragment extends Fragment implements View.OnClickListener {
+    private static final String TAG = "CartFragment";
 
 
     private OnCartInteractionListener mListener;
@@ -45,10 +51,18 @@ public class CartFragment extends Fragment {
     private IState activeState;
     private String purchaseStateCache;
 
-    @Bind(R.id.sidebar_text_view) TextView _txt;
-    @Bind(R.id.web_viewer) WebView _web;
+
+    @Bind(R.id.cart_product_list) RecyclerView _cart;
+    @Bind(R.id.cart_decrease_btn) ImageButton _decBtn;
+    @Bind(R.id.cart_increase_btn) ImageButton _incBtn;
+    @Bind(R.id.cart_delete_btn) ImageButton _delBtn;
+    @Bind(R.id.cart_clear_btn) ImageButton _clearBtn;
+    @Bind(R.id.purchase_button) Button _purchaseBtn;
     AccountFragment _acc;
-    //@Bind(R.id.account_fragment) AccountFragment _acc;
+    ArrayList<IProduct> productList;
+    LinearLayoutManager mLinearLayoutManager;
+    CartAdapter cartAdapter;
+
 
     public CartFragment() {
         // Required empty public constructor
@@ -69,6 +83,7 @@ public class CartFragment extends Fragment {
         final String host = preferences.getString(ThunderClientDialogPreference.PREF_IP, "");
         final String clientKey = preferences.getString(ThunderClientDialogPreference.PREF_PUBLIC, "");
 
+        WebView _web = new WebView(getContext().getApplicationContext());
         WebView.setWebContentsDebuggingEnabled(true);
         Log.d("CartFragment", "ThunderHost: " + host);
         _web.loadDataWithBaseURL("file:///android_asset/", webCode(host, clientKey), "text/html", "UTF-8", null);
@@ -77,14 +92,36 @@ public class CartFragment extends Fragment {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
         _web.addJavascriptInterface(new WebAppInterface(getContext().getApplicationContext()), "Android");
-
-        _txt.setText("Ready for input");
-
         activeState = new IState();
+
+        mLinearLayoutManager = new LinearLayoutManager(this.getContext());
+        _cart.setLayoutManager(mLinearLayoutManager);
+        productList =activeState.getProducts();
+        cartAdapter = new CartAdapter(getContext(), productList,
+                preferences.getString(getString(R.string.pref_key_fooapi_host), ""));
+        _cart.setAdapter(cartAdapter);
+
+        _incBtn.setOnClickListener(this);
+        _decBtn.setOnClickListener(this);
+        _delBtn.setOnClickListener(this);
+        _clearBtn.setOnClickListener(this);
+        buttonsSetEnable(false);
+
+        _purchaseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                runPurchase();
+            }
+        });
+
 
         FoobarAPI.sendStateToThunderpush(activeState);
 
         return view;
+    }
+
+    private void runPurchase() {
+
     }
 
     public void retrieveAccountFromCard(final String card) {
@@ -122,8 +159,24 @@ public class CartFragment extends Fragment {
         ft.commit();
     }
 
-    public void addProductToCart() {
+    public void addProductToCart(Product prod) {
+        Log.d(TAG, "Add product to cart");
+        for (int i = 0; i < productList.size(); i++) {
+            if (productList.get(i).equals(prod)) {
+                productList.get(i).incrementAmount();
+                cartAdapter.notifyItemChanged(i);
+                FoobarAPI.sendStateToThunderpush(activeState);
+                return;
+            }
+        }
+        productList.add(new IProduct(prod));
+        cartAdapter.notifyItemInserted(productList.size());
+        if (activeState.getPurchaseState().equals(PurchaseState.WAITING)) {
+            activeState.setPurchaseState(PurchaseState.ONGOING);
+            buttonsSetEnable(true);
+        }
 
+        FoobarAPI.sendStateToThunderpush(activeState);
 
     }
 
@@ -133,30 +186,21 @@ public class CartFragment extends Fragment {
             addAccountFragment(account);
             if (activeState.getPurchaseState().equals(PurchaseState.WAITING)) {
                 activeState.setPurchaseState(PurchaseState.ONGOING);
+                buttonsSetEnable(true);
             }
             FoobarAPI.sendStateToThunderpush(activeState);
         }
     }
 
-    private void updateState(IState newState) {
+    private void buttonsSetEnable(Boolean b) {
+        _clearBtn.setEnabled(b);
+        _incBtn.setEnabled(b);
+        _decBtn.setEnabled(b);
+        _delBtn.setEnabled(b);
+    }
+
+    private void updateState() {
         Log.d("CartFragment", "State updated");
-
-        IAccount account = newState.getAccount();
-        if (account == null) {
-            Log.d("CartFragment", "Account is null");
-        } else {
-            addAccountFragment(account);
-        }
-
-        final ArrayList<IProduct> products = newState.getProducts();
-
-        String string ="";
-        for (IProduct p : products) {
-            string += p.getName() + "\n";
-        }
-
-
-        _txt.setText(string);
 
 
     }
@@ -193,6 +237,48 @@ public class CartFragment extends Fragment {
 
     public void returnFromProfile() {
         activeState.setPurchaseState(purchaseStateCache);
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.cart_clear_btn) {
+            if (_acc != null) {
+                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+                ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
+                ft.remove(_acc).commit();
+                _acc = null;
+            }
+            buttonsSetEnable(false);
+            activeState.clearState();
+            cartAdapter.notifyDataSetChanged();
+            FoobarAPI.sendStateToThunderpush(activeState);
+            return;
+        }
+        for (IProduct p : productList) {
+            if (!p.getSelected()) {continue;}
+
+            switch (v.getId()) {
+                case R.id.cart_decrease_btn:
+                    if (p.getQty() <= 1) {
+                        //p.setSelected(false);
+                        productList.remove(p);
+                    }
+                    else {p.decrementAmount();}
+                    break;
+                case R.id.cart_increase_btn:
+                    p.incrementAmount();
+                    break;
+                case R.id.cart_delete_btn:
+                    //p.setSelected(false);
+                    productList.remove(p);
+                    break;
+                default:
+                    break;
+            }
+        }
+        cartAdapter.notifyDataSetChanged();
+        FoobarAPI.sendStateToThunderpush(activeState);
     }
 
 
@@ -239,19 +325,6 @@ public class CartFragment extends Fragment {
         /** Show a toast from the web page */
         @JavascriptInterface
         public void parseNewState(final String data) {
-
-            Log.d("Cart - WebAppInterface", data);
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-
-                    Gson gson = new Gson();
-                    IState state = gson.fromJson(data, IState.class);
-                    updateState(state);
-                }
-            });
-
-
 
         }
 
