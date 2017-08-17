@@ -67,10 +67,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@id/cart_button_layout"
-        android:layout_above="@+id/purchase_button" />
+        android:layout_above="@+id/initiate_purchase_button" />
 
     <Button
-        android:id="@id/purchase_button"
+        android:id="@id/initiate_purchase_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -1,5 +1,7 @@
 package nu.datavetenskap.foobarkiosk.fragments;
 
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -57,7 +59,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Bind(R.id.cart_increase_btn) ImageButton _incBtn;
     @Bind(R.id.cart_delete_btn) ImageButton _delBtn;
     @Bind(R.id.cart_clear_btn) ImageButton _clearBtn;
-    @Bind(R.id.purchase_button) Button _purchaseBtn;
+    @Bind(R.id.initiate_purchase_button) Button _purchaseBtn;
     AccountFragment _acc;
     ArrayList<IProduct> productList;
     LinearLayoutManager mLinearLayoutManager;
@@ -121,6 +123,13 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     }
 
     private void runPurchase() {
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.
+        FragmentManager fm = getActivity().getFragmentManager();
+
+        // Create and show the dialog.
+        DialogFragment newFragment = PurchaseDialogFragment.newInstance(activeState);
+        newFragment.show(fm, "dialog");
 
     }
 
