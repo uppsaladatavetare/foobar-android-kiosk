@@ -53,6 +53,9 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         if (imgURL != null) {
             holder._img.setImageUrl(URL + imgURL, mImageLoader);
         }
+        else {
+            holder._img.setImageUrl(null, mImageLoader);
+        }
         if (!holder.product.getSelected()) {
             holder._row.setBackgroundColor(Color.parseColor("#ffffff"));
         }

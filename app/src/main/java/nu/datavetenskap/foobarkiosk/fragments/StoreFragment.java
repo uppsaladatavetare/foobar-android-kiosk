@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 
@@ -31,6 +32,7 @@ public class StoreFragment extends Fragment {
 
     ProductGridAdapter productGrid;
     CartFragment cartFragment;
+    ArrayList<Product> productList = new ArrayList<Product>();
 
     @Bind(R.id.btn_get_products) Button _btnProducts;
     @Bind(R.id.btn_send_state) Button _btnState;
@@ -48,10 +50,17 @@ public class StoreFragment extends Fragment {
         ButterKnife.bind(this, view);
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        productGrid = new ProductGridAdapter(this.getContext(), new ArrayList<Product>(),
+        productGrid = new ProductGridAdapter(this.getContext(), productList,
                 pref.getString(getString(R.string.pref_key_fooapi_host), ""));
 
         _grid.setAdapter(productGrid);
+        _grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Product product = productList.get(position);
+                cartFragment.addProductToCart(product);
+            }
+        });
 
         cartFragment = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
 
@@ -97,7 +106,7 @@ public class StoreFragment extends Fragment {
         productGrid.notifyDataSetChanged();
 
 
-        cartFragment.addProductToCart(products[0]);
+        //cartFragment.addProductToCart(products[0]);
     }
 
 

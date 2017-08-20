@@ -64,14 +64,20 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     ArrayList<IProduct> productList;
     LinearLayoutManager mLinearLayoutManager;
     CartAdapter cartAdapter;
+    WebView _web;
 
 
     public CartFragment() {
         // Required empty public constructor
     }
 
-
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        final String host = preferences.getString(ThunderClientDialogPreference.PREF_IP, "");
+        final String clientKey = preferences.getString(ThunderClientDialogPreference.PREF_PUBLIC, "");
+        _web.loadDataWithBaseURL("file:///android_asset/", webCode(host, clientKey), "text/html", "UTF-8", null);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,13 +88,11 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         ButterKnife.bind(this, view);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        final String host = preferences.getString(ThunderClientDialogPreference.PREF_IP, "");
-        final String clientKey = preferences.getString(ThunderClientDialogPreference.PREF_PUBLIC, "");
 
-        WebView _web = new WebView(getContext().getApplicationContext());
+
+        _web = new WebView(getContext().getApplicationContext());
         WebView.setWebContentsDebuggingEnabled(true);
-        Log.d("CartFragment", "ThunderHost: " + host);
-        _web.loadDataWithBaseURL("file:///android_asset/", webCode(host, clientKey), "text/html", "UTF-8", null);
+
 
         WebSettings webSettings = _web.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -133,18 +137,20 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void retrieveAccountFromCard(final String card) {
+    public IAccount retrieveAccountFromCard(final String card) {
+        final IAccount[] account = {null};
         FoobarAPI.getAccountFromCard(card, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d("StringRequest", response);
                 Gson gson = new Gson();
-                IAccount account = gson.fromJson(response, IAccount.class);
+                account[0] = gson.fromJson(response, IAccount.class);
 
-                account.setCardId(card);
-                updateState(account);
+                account[0].setCardId(card);
+                updateState(account[0]);
             }
         });
+        return account[0];
     }
 
     private void addAccountFragment(IAccount account) {
@@ -154,19 +160,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         ft.add(R.id.account_fragment, _acc).commit();
     }
 
-    public void showAccountFragment() {
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.setCustomAnimations(android.R.anim.fade_in,
-                android.R.anim.fade_out);
-        if (_acc.isHidden()) {
-            ft.show(_acc);
-            //button.setText("Hide");
-        } else {
-            ft.hide(_acc);
-            //button.setText("Show");
-        }
-        ft.commit();
-    }
 
     public void addProductToCart(Product prod) {
         Log.d(TAG, "Add product to cart");
@@ -216,14 +209,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
 
 
-
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onCartInteraction(uri);
-        }
-    }
 
 
     private String webCode(String host, String clientKey) {
@@ -334,17 +319,39 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         /** Show a toast from the web page */
         @JavascriptInterface
         public void parseNewState(final String data) {
+//            Log.d(TAG, "New State: " + data);
+//            Gson gson = new Gson();
+//            final IState iState = gson.fromJson(data, IState.class);
+//
+//            PurchaseDialogFragment frag = (PurchaseDialogFragment) getActivity().getFragmentManager().findFragmentByTag("dialog");
+//            if (frag != null) {
+//                frag.updateAccessRights(iState.getAccount());
+//            }
 
         }
 
         @JavascriptInterface
         public void parseNewCard(final String data){
+            IAccount account = retrieveAccountFromCard(data);
 
+            PurchaseDialogFragment frag = (PurchaseDialogFragment) getActivity().getFragmentManager().findFragmentByTag("dialog");
+            if (frag != null) {
+                frag.updateAccessRights(account);
+            }
         }
 
         @JavascriptInterface
         public void parseNewProduct(final String data){
+            FoobarAPI.getProductFromBarcode(data, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.d("StringRequest", response);
+                    Gson gson = new Gson();
+                    Product p = gson.fromJson(response, Product.class);
 
+                    addProductToCart(p);
+                }
+            });
         }
     }
 }
