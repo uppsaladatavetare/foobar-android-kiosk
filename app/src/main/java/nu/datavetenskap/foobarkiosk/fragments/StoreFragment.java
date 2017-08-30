@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 
 import com.android.volley.Response;
@@ -22,7 +21,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
-import nu.datavetenskap.foobarkiosk.adapters.ProductGridAdapter;
 import nu.datavetenskap.foobarkiosk.adapters.StoreAdapter;
 import nu.datavetenskap.foobarkiosk.models.IAccount;
 import nu.datavetenskap.foobarkiosk.models.Product;
@@ -32,9 +30,7 @@ import nu.datavetenskap.foobarkiosk.models.Product;
  */
 public class StoreFragment extends Fragment {
 
-    ProductGridAdapter productGrid;
     CartFragment cartFragment;
-    ArrayList<Product> productList = new ArrayList<Product>();
 
     ArrayList<Product> storeProductList;
     StoreAdapter storeAdapter;
@@ -56,10 +52,6 @@ public class StoreFragment extends Fragment {
         ButterKnife.bind(this, view);
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-//        productGrid = new ProductGridAdapter(this.getContext(), new ArrayList<Product>(),
-//                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
-//
-//        _grid.setAdapter(productGrid);
 
         storeProductList = new ArrayList<>();
 
@@ -70,15 +62,10 @@ public class StoreFragment extends Fragment {
         storeAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View view) {
-
-        _grid.setAdapter(productGrid);
-        _grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Product product = productList.get(position);
-                cartFragment.addProductToCart(product);
+                cartFragment.addProductToCart(storeProductList.get(position));
             }
         });
+        _grid.setAdapter(storeAdapter);
 
         cartFragment = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
 
@@ -126,12 +113,6 @@ public class StoreFragment extends Fragment {
 
         }
 
-        //productGrid.addAll(products);
-
-        //productGrid.notifyDataSetChanged();
-
-
-        //cartFragment.addProductToCart(products[0]);
     }
 
 
