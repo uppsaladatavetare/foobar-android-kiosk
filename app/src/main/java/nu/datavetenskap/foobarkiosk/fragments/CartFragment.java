@@ -72,8 +72,8 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
         final String host = preferences.getString(ThunderClientDialogPreference.PREF_IP, "");
         final String clientKey = preferences.getString(ThunderClientDialogPreference.PREF_PUBLIC, "");
         _web.loadDataWithBaseURL("file:///android_asset/", webCode(host, clientKey), "text/html", "UTF-8", null);
@@ -249,14 +249,15 @@ public class CartFragment extends Fragment implements View.OnClickListener {
             FoobarAPI.sendStateToThunderpush(activeState);
             return;
         }
+
+        ArrayList<IProduct> toBeRemoved  = new ArrayList<>();
         for (IProduct p : productList) {
             if (!p.getSelected()) {continue;}
 
             switch (v.getId()) {
                 case R.id.cart_decrease_btn:
                     if (p.getQty() <= 1) {
-                        //p.setSelected(false);
-                        productList.remove(p);
+                        toBeRemoved.add(p);
                     }
                     else {p.decrementAmount();}
                     break;
@@ -264,12 +265,15 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                     p.incrementAmount();
                     break;
                 case R.id.cart_delete_btn:
-                    //p.setSelected(false);
-                    productList.remove(p);
+                    toBeRemoved.add(p);
                     break;
                 default:
                     break;
             }
+        }
+
+        for (IProduct p : toBeRemoved) {
+            productList.remove(p);
         }
         cartAdapter.notifyDataSetChanged();
         FoobarAPI.sendStateToThunderpush(activeState);
@@ -319,7 +323,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         /** Show a toast from the web page */
         @JavascriptInterface
         public void parseNewState(final String data) {
-//            Log.d(TAG, "New State: " + data);
+            Log.d(TAG, "New State: " + data);
 //            Gson gson = new Gson();
 //            final IState iState = gson.fromJson(data, IState.class);
 //

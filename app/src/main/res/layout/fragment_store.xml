@@ -23,15 +23,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toRightOf="@id/btn_get_products"
         android:clickable="true"
-        android:id="@+id/btn_send_state"
-        android:text="send fake state"
+        android:id="@+id/btn_get_categories"
+        android:text="Get categories"
         />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/btn_send_state"
+        app:layout_constraintLeft_toRightOf="@id/btn_get_categories"
         android:clickable="true"
         android:id="@+id/btn_get_card"
         android:text="swipe a card"/>

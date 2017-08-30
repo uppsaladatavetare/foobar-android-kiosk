@@ -35,7 +35,7 @@ public class StoreFragment extends Fragment {
     ArrayList<Product> productList = new ArrayList<Product>();
 
     @Bind(R.id.btn_get_products) Button _btnProducts;
-    @Bind(R.id.btn_send_state) Button _btnState;
+    @Bind(R.id.btn_get_categories) Button _btnState;
     @Bind(R.id.btn_get_card) Button _btncard;
     @Bind(R.id.grid_view) GridView _grid;
 
@@ -80,8 +80,8 @@ public class StoreFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                //updateStateWithThunderClient();
-                updateStateWithVolley();
+                getProductCategories();
+                //updateStateWithVolley();
 
             }
         });
@@ -95,9 +95,19 @@ public class StoreFragment extends Fragment {
         return view;
     }
 
+    private void getProductCategories() {
+        FoobarAPI.getCategories(new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("StoreFragment", response);
+            }
+        });
+    }
 
 
     private void addAllProducts(String str) {
+
+        Log.d("StoreFragment", str);
 
         Gson gson = new Gson();
         Product[] products = gson.fromJson(str, Product[].class);

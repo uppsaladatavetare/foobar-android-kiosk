@@ -11,6 +11,7 @@ public class Product {
     private String description;
     private float price;
     private boolean active;
+    private String category;
     protected int qty;
     private String image;
 
@@ -79,4 +80,7 @@ public class Product {
         return qty;
     }
 
+    public String getCategory() {
+        return category;
+    }
 }

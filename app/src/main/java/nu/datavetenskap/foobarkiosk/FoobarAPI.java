@@ -59,6 +59,11 @@ public class FoobarAPI {
         sendAPIRequest("/api/products/?code=" + barcode, onResponse);
     }
 
+    public static void getCategories(Response.Listener<String> onResponse) {
+        checkCompleteness();
+        sendAPIRequest("/api/categories/", onResponse);
+    }
+
     public static void getAccountFromCard(String card, Response.Listener<String> stringRequest) {
         checkCompleteness();
         sendAPIRequest("/api/accounts/" + card + "/", stringRequest);
