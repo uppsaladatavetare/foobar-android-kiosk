@@ -4,13 +4,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
 
 import com.android.volley.Response;
 import com.google.gson.Gson;
@@ -21,7 +21,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
-import nu.datavetenskap.foobarkiosk.adapters.ProductGridAdapter;
+import nu.datavetenskap.foobarkiosk.adapters.StoreAdapter;
 import nu.datavetenskap.foobarkiosk.models.IAccount;
 import nu.datavetenskap.foobarkiosk.models.Product;
 
@@ -30,14 +30,16 @@ import nu.datavetenskap.foobarkiosk.models.Product;
  */
 public class StoreFragment extends Fragment {
 
-    ProductGridAdapter productGrid;
     CartFragment cartFragment;
-    ArrayList<Product> productList = new ArrayList<Product>();
+
+    ArrayList<Product> storeProductList;
+    StoreAdapter storeAdapter;
+    GridLayoutManager mgridLayoutManager;
 
     @Bind(R.id.btn_get_products) Button _btnProducts;
     @Bind(R.id.btn_get_categories) Button _btnState;
     @Bind(R.id.btn_get_card) Button _btncard;
-    @Bind(R.id.grid_view) GridView _grid;
+    @Bind(R.id.grid_view) RecyclerView _grid;
 
     public StoreFragment() {
     }
@@ -50,17 +52,20 @@ public class StoreFragment extends Fragment {
         ButterKnife.bind(this, view);
         final SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        productGrid = new ProductGridAdapter(this.getContext(), productList,
-                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
 
-        _grid.setAdapter(productGrid);
-        _grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        storeProductList = new ArrayList<>();
+
+        mgridLayoutManager = new GridLayoutManager(getActivity(), 4);
+        _grid.setLayoutManager(mgridLayoutManager);
+        storeAdapter = new StoreAdapter(getContext(), storeProductList,
+                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
+        storeAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Product product = productList.get(position);
-                cartFragment.addProductToCart(product);
+            public void onItemClick(int position, View view) {
+                cartFragment.addProductToCart(storeProductList.get(position));
             }
         });
+        _grid.setAdapter(storeAdapter);
 
         cartFragment = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
 
@@ -111,12 +116,13 @@ public class StoreFragment extends Fragment {
 
         Gson gson = new Gson();
         Product[] products = gson.fromJson(str, Product[].class);
-        productGrid.addAll(products);
 
-        productGrid.notifyDataSetChanged();
+        for (int i = 0; i < products.length; ++i) {
+            storeProductList.add(products[i]);
+            storeAdapter.notifyItemInserted(storeProductList.size());
 
+        }
 
-        //cartFragment.addProductToCart(products[0]);
     }
 
 
