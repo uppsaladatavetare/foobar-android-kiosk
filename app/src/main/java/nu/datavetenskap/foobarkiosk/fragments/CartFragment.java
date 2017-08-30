@@ -57,7 +57,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Bind(R.id.cart_increase_btn) ImageButton _incBtn;
     @Bind(R.id.cart_delete_btn) ImageButton _delBtn;
     @Bind(R.id.cart_clear_btn) ImageButton _clearBtn;
-    @Bind(R.id.purchase_button) Button _purchaseBtn;
+    @Bind(R.id.initiate_purchase_button) Button _purchaseBtn;
     AccountFragment _acc;
     ArrayList<IProduct> productList;
     LinearLayoutManager mLinearLayoutManager;

@@ -47,7 +47,7 @@
         android:background="@color/white_pressed"
         >
 
-        <GridView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/grid_view"
             android:layout_width="0dp"
             android:layout_height="match_parent"
