@@ -9,7 +9,7 @@ public class Product {
     private String name;
     private String code;
     private String description;
-    private Number price;
+    private float price;
     private boolean active;
     protected int qty;
     private String image;
@@ -67,7 +67,7 @@ public class Product {
         return image;
     }
 
-    public Number getPrice() {
+    public float getPrice() {
         return price;
     }
 

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/purchase_cash_btn"
+        android:layout_width="300dp"
+        android:layout_height="500dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:drawableTop="@drawable/cash_purchase_button"
+        android:backgroundTint="@color/purchase_button_tint"
+        android:text="Cash"
+
+        />
+
+    <Button
+        android:id="@+id/purchase_foocash_btn"
+        android:layout_width="300dp"
+        android:layout_height="500dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="30dp"
+        android:text="FooCash"
+        android:drawableTop="@drawable/foocash_purchase_button"
+        android:backgroundTint="@color/purchase_button_tint"/>
+
+    <Button
+        android:id="@+id/purchase_credit_btn"
+        android:layout_width="300dp"
+        android:layout_height="500dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginRight="30dp"
+        android:text="Credit/Debit Card"
+        android:drawableTop="@drawable/credit_purchase_button"
+        android:backgroundTint="@color/purchase_button_tint"/>
+
+</LinearLayout>

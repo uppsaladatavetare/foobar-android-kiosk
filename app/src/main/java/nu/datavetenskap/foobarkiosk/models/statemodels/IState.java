@@ -49,6 +49,14 @@ public class IState {
         state.clearstate();
     }
 
+    public float getPurchaseCost() {
+        float cost = 0;
+        for (IProduct p : getProducts()) {
+            cost += p.getPrice();
+        }
+        return cost;
+    }
+
 
     private class State {
 

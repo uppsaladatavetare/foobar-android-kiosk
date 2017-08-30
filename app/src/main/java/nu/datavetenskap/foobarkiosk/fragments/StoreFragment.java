@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 
 import com.android.volley.Response;
@@ -33,6 +34,7 @@ public class StoreFragment extends Fragment {
 
     ProductGridAdapter productGrid;
     CartFragment cartFragment;
+    ArrayList<Product> productList = new ArrayList<Product>();
 
     ArrayList<Product> storeProductList;
     StoreAdapter storeAdapter;
@@ -69,9 +71,14 @@ public class StoreFragment extends Fragment {
             @Override
             public void onItemClick(int position, View view) {
 
+        _grid.setAdapter(productGrid);
+        _grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Product product = productList.get(position);
+                cartFragment.addProductToCart(product);
             }
         });
-        _grid.setAdapter(storeAdapter);
 
         cartFragment = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
 
