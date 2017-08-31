@@ -37,8 +37,10 @@ public class StoreFragment extends Fragment {
 
     ArrayList<StoreEntity> storeProductList;
     ArrayList<StoreEntity> storeCategoriesList;
+    ArrayList<StoreEntity> storeEntities;
     StoreAdapter storeProductAdapter;
     StoreAdapter storeCategoryAdapter;
+    StoreAdapter storeEntityAdapter;
     GridLayoutManager mgridLayoutManager;
 
     @Bind(R.id.btn_get_products) Button _btnProducts;
@@ -60,20 +62,32 @@ public class StoreFragment extends Fragment {
 
         storeProductList = new ArrayList<>();
         storeCategoriesList = new ArrayList<>();
-        storeCategoryAdapter = new StoreAdapter(getContext(), storeCategoriesList,
+        storeEntities = new ArrayList<>();
+//        storeCategoryAdapter = new StoreAdapter(getContext(), storeCategoriesList,
+//                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
+//        StoreAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
+//            @Override
+//            public void onItemClick(int position, View view) {
+//                initiateEntityAction(position);
+//            }
+//        });
+
+        storeEntityAdapter = new StoreAdapter(getContext(), storeEntities,
                 pref.getString(getString(R.string.pref_key_fooapi_host), ""));
+        StoreAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View view) {
+                initiateEntityAction(position);
+            }
+        });
+        _grid.setAdapter(storeEntityAdapter);
+
 
         mgridLayoutManager = new GridLayoutManager(getActivity(), 5);
         _grid.setLayoutManager(mgridLayoutManager);
-        storeProductAdapter = new StoreAdapter(getContext(), storeProductList,
-                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
-        storeProductAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
-            @Override
-            public void onItemClick(int position, View view) {
-                cartFragment.addProductToCart((Product) storeProductList.get(position));
-            }
-        });
-        _grid.setAdapter(storeProductAdapter);
+//        storeProductAdapter = new StoreAdapter(getContext(), storeProductList,
+//                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
+//        _grid.setAdapter(storeCategoryAdapter);
 
         cartFragment = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
 
@@ -82,6 +96,7 @@ public class StoreFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                getProductCategories();
                 getProductList();
                 //retrieveProductFromBarcode("7310500088853");
                 //retrieveAccountFromCard("1337");
@@ -93,7 +108,7 @@ public class StoreFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                getProductCategories();
+                //getProductCategories();
                 //updateStateWithVolley();
 
             }
@@ -108,6 +123,33 @@ public class StoreFragment extends Fragment {
         return view;
     }
 
+    private void initiateEntityAction(int position) {
+        Log.d("StoreFragment", "Entity click");
+        StoreEntity entity = storeEntities.get(position);
+        if (entity instanceof Category) {
+            Log.d("StoreFragment", "Category click");
+            String categoryId = entity.getId();
+            storeEntities.clear();
+            for (StoreEntity e : storeProductList) {
+                Product p = (Product) e;
+                if (p.getCategory() != null && p.getCategory().equals(categoryId)) {
+                    storeEntities.add(e);
+                }
+            }
+            storeEntities.add(0, new StoreEntity.BackButtonEntity());
+            storeEntityAdapter.notifyDataSetChanged();
+        }
+        else if(entity instanceof StoreEntity.BackButtonEntity) {
+            storeEntities.clear();
+            storeEntities.addAll(storeCategoriesList);
+            storeEntityAdapter.notifyDataSetChanged();
+        }
+        else {
+            Log.d("StoreFragment", "Product click");
+            cartFragment.addProductToCart((Product) entity);
+        }
+    }
+
     private void getProductCategories() {
         FoobarAPI.getCategories(new Response.Listener<String>() {
             @Override
@@ -118,6 +160,9 @@ public class StoreFragment extends Fragment {
                 Category[] categories = gson.fromJson(response, Category[].class);
 
                 Collections.addAll(storeCategoriesList, categories);
+                storeEntities.addAll(storeCategoriesList);
+                storeEntityAdapter.notifyDataSetChanged();
+                //storeCategoryAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -132,7 +177,7 @@ public class StoreFragment extends Fragment {
 
         for (Product product : products) {
             storeProductList.add(product);
-            storeProductAdapter.notifyItemInserted(storeProductList.size());
+            //storeProductAdapter.notifyItemInserted(storeProductList.size());
 
         }
 

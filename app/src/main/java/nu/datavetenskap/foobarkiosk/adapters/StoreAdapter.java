@@ -16,7 +16,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.VolleySingleton;
-import nu.datavetenskap.foobarkiosk.models.Product;
 import nu.datavetenskap.foobarkiosk.models.StoreEntity;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> {
@@ -34,7 +33,7 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
     public interface ClickListener {
         void onItemClick(int position, View view);
     }
-    public void setOnItemClickListener(ClickListener clickListener) {
+    public static void setOnItemClickListener(ClickListener clickListener) {
         StoreAdapter.clickListener = clickListener;
     }
 

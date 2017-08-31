@@ -18,4 +18,11 @@ public class StoreEntity {
         return image;
     }
 
+    public static class BackButtonEntity extends StoreEntity {
+        @Override
+        public String getName() {
+            return "Back";
+        }
+    }
+
 }
