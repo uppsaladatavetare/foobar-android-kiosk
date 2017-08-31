@@ -49,6 +49,9 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
 
         holder._name.setText(p.getName());
         holder._img.setDefaultImageResId(R.drawable.icon_product);
+        if (p instanceof StoreEntity.BackButtonEntity) {
+            holder._img.setDefaultImageResId(R.drawable.ic_keyboard_backspace_black_24dp);
+        }
         String imgURL = p.getImage();
         if (imgURL != null) {
             holder._img.setImageUrl(URL + imgURL, mImageLoader);

@@ -124,15 +124,13 @@ public class StoreFragment extends Fragment {
     }
 
     private void initiateEntityAction(int position) {
-        Log.d("StoreFragment", "Entity click");
         StoreEntity entity = storeEntities.get(position);
         if (entity instanceof Category) {
-            Log.d("StoreFragment", "Category click");
             String categoryId = entity.getId();
             storeEntities.clear();
             for (StoreEntity e : storeProductList) {
                 Product p = (Product) e;
-                if (p.getCategory() != null && p.getCategory().equals(categoryId)) {
+                if (p.getCategory() != null && p.isActive() && p.getCategory().equals(categoryId)) {
                     storeEntities.add(e);
                 }
             }
@@ -145,7 +143,6 @@ public class StoreFragment extends Fragment {
             storeEntityAdapter.notifyDataSetChanged();
         }
         else {
-            Log.d("StoreFragment", "Product click");
             cartFragment.addProductToCart((Product) entity);
         }
     }
@@ -158,8 +155,10 @@ public class StoreFragment extends Fragment {
 
                 Gson gson = new Gson();
                 Category[] categories = gson.fromJson(response, Category[].class);
+                storeCategoriesList.clear();
 
                 Collections.addAll(storeCategoriesList, categories);
+                storeEntities.clear();
                 storeEntities.addAll(storeCategoriesList);
                 storeEntityAdapter.notifyDataSetChanged();
                 //storeCategoryAdapter.notifyDataSetChanged();
@@ -175,11 +174,7 @@ public class StoreFragment extends Fragment {
         Gson gson = new Gson();
         Product[] products = gson.fromJson(str, Product[].class);
 
-        for (Product product : products) {
-            storeProductList.add(product);
-            //storeProductAdapter.notifyItemInserted(storeProductList.size());
-
-        }
+        Collections.addAll(storeProductList, products);
 
     }
 
@@ -188,6 +183,7 @@ public class StoreFragment extends Fragment {
         FoobarAPI.getProducts(new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                storeProductList.clear();
                 addAllProducts(response);
             }
         });
