@@ -16,14 +16,17 @@ import com.android.volley.Response;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.adapters.StoreAdapter;
+import nu.datavetenskap.foobarkiosk.models.Category;
 import nu.datavetenskap.foobarkiosk.models.IAccount;
 import nu.datavetenskap.foobarkiosk.models.Product;
+import nu.datavetenskap.foobarkiosk.models.StoreEntity;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -32,8 +35,10 @@ public class StoreFragment extends Fragment {
 
     CartFragment cartFragment;
 
-    ArrayList<Product> storeProductList;
-    StoreAdapter storeAdapter;
+    ArrayList<StoreEntity> storeProductList;
+    ArrayList<StoreEntity> storeCategoriesList;
+    StoreAdapter storeProductAdapter;
+    StoreAdapter storeCategoryAdapter;
     GridLayoutManager mgridLayoutManager;
 
     @Bind(R.id.btn_get_products) Button _btnProducts;
@@ -54,18 +59,21 @@ public class StoreFragment extends Fragment {
 
 
         storeProductList = new ArrayList<>();
-
-        mgridLayoutManager = new GridLayoutManager(getActivity(), 4);
-        _grid.setLayoutManager(mgridLayoutManager);
-        storeAdapter = new StoreAdapter(getContext(), storeProductList,
+        storeCategoriesList = new ArrayList<>();
+        storeCategoryAdapter = new StoreAdapter(getContext(), storeCategoriesList,
                 pref.getString(getString(R.string.pref_key_fooapi_host), ""));
-        storeAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
+
+        mgridLayoutManager = new GridLayoutManager(getActivity(), 5);
+        _grid.setLayoutManager(mgridLayoutManager);
+        storeProductAdapter = new StoreAdapter(getContext(), storeProductList,
+                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
+        storeProductAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View view) {
-                cartFragment.addProductToCart(storeProductList.get(position));
+                cartFragment.addProductToCart((Product) storeProductList.get(position));
             }
         });
-        _grid.setAdapter(storeAdapter);
+        _grid.setAdapter(storeProductAdapter);
 
         cartFragment = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
 
@@ -105,6 +113,11 @@ public class StoreFragment extends Fragment {
             @Override
             public void onResponse(String response) {
                 Log.d("StoreFragment", response);
+
+                Gson gson = new Gson();
+                Category[] categories = gson.fromJson(response, Category[].class);
+
+                Collections.addAll(storeCategoriesList, categories);
             }
         });
     }
@@ -117,9 +130,9 @@ public class StoreFragment extends Fragment {
         Gson gson = new Gson();
         Product[] products = gson.fromJson(str, Product[].class);
 
-        for (int i = 0; i < products.length; ++i) {
-            storeProductList.add(products[i]);
-            storeAdapter.notifyItemInserted(storeProductList.size());
+        for (Product product : products) {
+            storeProductList.add(product);
+            storeProductAdapter.notifyItemInserted(storeProductList.size());
 
         }
 

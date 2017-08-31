@@ -23,6 +23,7 @@
         android:maxLines="2"
         android:paddingTop="5dp"
         android:maxHeight="70dp"
-        android:maxWidth="190dp"/>
+        android:maxWidth="190dp"
+        android:gravity="center"/>
 
 </LinearLayout>

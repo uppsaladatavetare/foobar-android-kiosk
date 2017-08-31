@@ -17,16 +17,17 @@ import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.VolleySingleton;
 import nu.datavetenskap.foobarkiosk.models.Product;
+import nu.datavetenskap.foobarkiosk.models.StoreEntity;
 
 public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> {
-    private ArrayList<Product> products;
+    private ArrayList<StoreEntity> entities;
     private ImageLoader mImageLoader;
     private String URL;
     private static ClickListener clickListener;
 
-    public StoreAdapter(Context context, ArrayList<Product> productArrayList, String apiUrl) {
+    public StoreAdapter(Context context, ArrayList<StoreEntity> productArrayList, String apiUrl) {
         mImageLoader = VolleySingleton.getInstance(context.getApplicationContext()).getImageLoader();
-        products = productArrayList;
+        entities = productArrayList;
         URL  = apiUrl;
     }
 
@@ -45,9 +46,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Product p = products.get(position);
+        final StoreEntity p = entities.get(position);
 
-        holder._product = p;
         holder._name.setText(p.getName());
         holder._img.setDefaultImageResId(R.drawable.icon_product);
         String imgURL = p.getImage();
@@ -63,14 +63,13 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return products.size();
+        return entities.size();
     }
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @Bind(R.id.product_image) NetworkImageView _img;
         @Bind(R.id.product_name) TextView _name;
-        Product _product;
 
 
         ViewHolder(View view) {

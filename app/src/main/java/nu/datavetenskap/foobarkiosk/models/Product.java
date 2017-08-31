@@ -4,16 +4,13 @@ package nu.datavetenskap.foobarkiosk.models;
  * Created by alexis on 2017-06-24.
  */
 
-public class Product {
-    protected String id;
-    private String name;
+public class Product extends StoreEntity {
     private String code;
     private String description;
     private float price;
     private boolean active;
     private String category;
     protected int qty;
-    private String image;
 
     public Product(Product p) {
         id = p.id;
@@ -48,13 +45,9 @@ public class Product {
                 '}';
     }
 
-    public String getId() {
-        return id;
-    }
 
-    public String getName() {
-        return name;
-    }
+
+
 
     public String getCode() {
         return code;
@@ -64,9 +57,7 @@ public class Product {
         return description;
     }
 
-    public String getImage() {
-        return image;
-    }
+
 
     public float getPrice() {
         return price;
