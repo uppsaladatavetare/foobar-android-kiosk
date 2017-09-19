@@ -34,6 +34,10 @@ public class IProduct extends Product {
         this.selected = selected;
     }
 
+    public Boolean isReady() {
+        return !loading && !failed;
+    }
+
     @Override
     public String toString() {
         return "IProduct{" + super.toString() +

@@ -1,6 +1,7 @@
 package nu.datavetenskap.foobarkiosk.fragments;
 
 import android.app.DialogFragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,8 +10,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.sumup.merchant.api.SumUpAPI;
+import com.sumup.merchant.api.SumUpLogin;
+import com.sumup.merchant.api.SumUpPayment;
+
+import java.util.UUID;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.models.IAccount;
 import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
@@ -36,6 +44,9 @@ public class PurchaseDialogFragment extends DialogFragment implements
 //        Log.d(TAG, "Cost2: " + getArguments().getFloat("costTotal"));
         determineFooCashAbility();
 
+        _cashBtn.setOnClickListener(this);
+        _fooCBtn.setOnClickListener(this);
+        _creditBtn.setOnClickListener(this);
         return view;
     }
 
@@ -55,7 +66,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
     }
 
-    public static PurchaseDialogFragment newInstance(IState state) {
+    public static PurchaseDialogFragment newInstance(IState state, String purchaseBody) {
         PurchaseDialogFragment f = new PurchaseDialogFragment();
 
         // Supply index input as an argument.
@@ -70,6 +81,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
         else {
             args.putBoolean("loggedIn", false);
         }
+        args.putString("purchaseString", purchaseBody);
         args.putFloat("costTotal", state.getPurchaseCost());
         f.setArguments(args);
 
@@ -79,8 +91,10 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
     @Override
     public void onClick(View v) {
+        Log.d("PurchaseDialog", "onClick");
         switch (v.getId()) {
             case R.id.purchase_cash_btn:
+                Log.d("PurchaseDialog", "Cash button click");
                 cashPurchase();
                 break;
             case R.id.purchase_foocash_btn:
@@ -95,7 +109,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
     }
 
     private void cashPurchase() {
-
+        FoobarAPI.sendPurchaseRequest(getArguments().getString("purchaseString"));
     }
 
     private void fooCashPurchase() {
@@ -103,6 +117,43 @@ public class PurchaseDialogFragment extends DialogFragment implements
     }
 
     private void creditCardPurchase() {
+        testPurchase();
+    }
+
+    private void testLogin() {
+        SumUpLogin sumUplogin = SumUpLogin.builder("6791e731-8aff-49e5-b49a-54b4ae23e4f5").build();
+        SumUpAPI.openLoginActivity(getActivity(), sumUplogin, REQUEST_CODE_LOGIN);
+    }
+
+    private void testPurchase() {
+        SumUpPayment payment = SumUpPayment.builder()
+                // mandatory parameters
+                // Please go to https://me.sumup.com/developers to retrieve your Affiliate Key by entering the application ID of your app. (e.g. com.sumup.sdksampleapp)
+                .affiliateKey("6791e731-8aff-49e5-b49a-54b4ae23e4f5")
+                //.accessToken("YOUR_USER_TOKEN")
+                // Total purchase cost amount
+                .productAmount(13.37)
+                .currency(SumUpPayment.Currency.SEK)
+                // optional: include a tip amount in addition to the productAmount
+                //.tipAmount(0.10)
+                // optional: add details
+                //.productTitle("Billys Pizza")
+                .addAdditionalInfo("Billys Pizza", "13 kr")
+                //.receiptEmail("customer@mail.com")
+                //.receiptSMS("+3531234567890")
+                // optional: Add metadata
+                //.productTitle("Delicatoboll")
+                .addAdditionalInfo("Delicatoboll", "6 kr")
+                //.productTitle("Kaffe")
+                .addAdditionalInfo("Kaffe", "5 kr")
+                // optional: foreign transaction ID, must be unique!
+                .foreignTransactionId(UUID.randomUUID().toString())  // can not exceed 128 chars
+                // optional: skip the success screen
+                //.skipSuccessScreen()
+                .build();
+
+
+        SumUpAPI.openPaymentActivity(getActivity(), payment, 1);
 
     }
 
@@ -129,5 +180,53 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
 
 
+    }
+
+    private static final int REQUEST_CODE_LOGIN = 1;
+    private static final int REQUEST_CODE_PAYMENT = 2;
+    private static final int REQUEST_CODE_PAYMENT_SETTINGS = 3;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
+        switch (requestCode) {
+            case REQUEST_CODE_LOGIN:
+                if (data != null) {
+                    Bundle extra = data.getExtras();
+                    Log.e("SumUp Payment", "Result code: " + extra.getInt(SumUpAPI.Response.RESULT_CODE));
+                    Log.e("SumUp Payment", "Message: " + extra.getString(SumUpAPI.Response.MESSAGE));
+                }
+                break;
+
+            case REQUEST_CODE_PAYMENT:
+                if (data != null) {
+                    Bundle extra = data.getExtras();
+
+                    Log.e("SumUp Payment", "Result code: " + extra.getInt(SumUpAPI.Response.RESULT_CODE));
+                    Log.e("SumUp Payment", "Message: " + extra.getString(SumUpAPI.Response.MESSAGE));
+
+//                    String txCode = extra.getString(SumUpAPI.Response.TX_CODE);
+//                    mTxCode.setText(txCode == null ? "" : "Transaction Code: " + txCode);
+//
+//                    boolean receiptSent = extra.getBoolean(SumUpAPI.Response.RECEIPT_SENT);
+//                    mReceiptSent.setText("Receipt sent: " + receiptSent);
+//
+//                    TransactionInfo transactionInfo = extra.getParcelable(SumUpAPI.Response.TX_INFO);
+//                    mTxInfo.setText(transactionInfo == null ? "" : "Transaction Info : " + transactionInfo);
+                }
+                break;
+
+            case REQUEST_CODE_PAYMENT_SETTINGS:
+                if (data != null) {
+                    Bundle extra = data.getExtras();
+                    Log.e("SumUp Payment", "Result code: " + extra.getInt(SumUpAPI.Response.RESULT_CODE));
+                    Log.e("SumUp Payment", "Message: " + extra.getString(SumUpAPI.Response.MESSAGE));
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 }

@@ -48,6 +48,10 @@ public class IAccount {
         this.cardId = that.cardId;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public String getToken() {
         return token;
     }
