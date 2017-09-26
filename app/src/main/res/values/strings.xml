@@ -59,6 +59,13 @@
     </string-array>
 
 
+    <!-- Purchase and Cart -->
+    <string name="cancel_purchase">Cancel purchase</string>
+    <string name="credit_debit_card">Credit/Debit Card</string>
+    <string name="foocash">FooCash</string>
+    <string name="cash">Cash</string>
+
+
     <!-- Unsorted and possibly junk strings -->
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>

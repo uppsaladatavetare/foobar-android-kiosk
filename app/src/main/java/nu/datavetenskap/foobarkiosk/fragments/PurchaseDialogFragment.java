@@ -1,6 +1,7 @@
 package nu.datavetenskap.foobarkiosk.fragments;
 
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.gson.Gson;
 import com.sumup.merchant.api.SumUpAPI;
 import com.sumup.merchant.api.SumUpLogin;
 import com.sumup.merchant.api.SumUpPayment;
@@ -27,10 +29,14 @@ import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
 public class PurchaseDialogFragment extends DialogFragment implements
         View.OnClickListener {
     private static final String TAG = "PurchaseDialogFragment";
+    private OnPurchaseDialogInteractionListener mListener;
+    private static IState activeState;
+    private static Gson gson;
 
     @Bind(R.id.purchase_cash_btn) Button _cashBtn;
     @Bind(R.id.purchase_foocash_btn) Button _fooCBtn;
     @Bind(R.id.purchase_credit_btn) Button _creditBtn;
+    @Bind(R.id.purchase_cancel_btn) Button _cancelBtn;
 
     @Nullable
     @Override
@@ -47,6 +53,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
         _cashBtn.setOnClickListener(this);
         _fooCBtn.setOnClickListener(this);
         _creditBtn.setOnClickListener(this);
+        _cancelBtn.setOnClickListener(this);
         return view;
     }
 
@@ -66,7 +73,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
     }
 
-    public static PurchaseDialogFragment newInstance(IState state, String purchaseBody) {
+    public static PurchaseDialogFragment newInstance(IState state) {
         PurchaseDialogFragment f = new PurchaseDialogFragment();
 
         // Supply index input as an argument.
@@ -81,7 +88,9 @@ public class PurchaseDialogFragment extends DialogFragment implements
         else {
             args.putBoolean("loggedIn", false);
         }
-        args.putString("purchaseString", purchaseBody);
+        gson = new Gson();
+        activeState = state;
+        args.putString("purchaseState", gson.toJson(state));
         args.putFloat("costTotal", state.getPurchaseCost());
         f.setArguments(args);
 
@@ -91,10 +100,8 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
     @Override
     public void onClick(View v) {
-        Log.d("PurchaseDialog", "onClick");
         switch (v.getId()) {
             case R.id.purchase_cash_btn:
-                Log.d("PurchaseDialog", "Cash button click");
                 cashPurchase();
                 break;
             case R.id.purchase_foocash_btn:
@@ -103,17 +110,23 @@ public class PurchaseDialogFragment extends DialogFragment implements
             case R.id.purchase_credit_btn:
                 creditCardPurchase();
                 break;
+            case R.id.purchase_cancel_btn:
+                dismiss();
             default:
                 break;
         }
     }
 
     private void cashPurchase() {
-        FoobarAPI.sendPurchaseRequest(getArguments().getString("purchaseString"));
+        //final String purchaseState = getArguments().getString("purchaseState");
+        //FoobarAPI.sendCashPurchaseRequest(gson.fromJson(purchaseState, IState.class));
+        FoobarAPI.sendCashPurchaseRequest(activeState);
     }
 
     private void fooCashPurchase() {
-
+//        final String purchaseState = getArguments().getString("purchaseState");
+//        FoobarAPI.sendCashPurchaseRequest(gson.fromJson(purchaseState, IState.class));
+        FoobarAPI.sendFooCashPurchaseRequest(activeState);
     }
 
     private void creditCardPurchase() {
@@ -158,26 +171,28 @@ public class PurchaseDialogFragment extends DialogFragment implements
     }
 
     public void updateAccessRights(final IAccount account) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (account == null){
-                    _fooCBtn.setEnabled(false);
-                    _fooCBtn.setText("Not logged in with foo card");
-                    return;
+        if (activeState.getAccount() == null) {
+            activeState.setAccount(account);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (account == null){
+                        _fooCBtn.setEnabled(false);
+                        _fooCBtn.setText("Not logged in with foo card");
+                        return;
+                    }
+                    if (account.getBalance() < getArguments().getFloat("costTotal")) {
+                        _fooCBtn.setEnabled(false);
+                        _fooCBtn.setText("Insufficient funds");
+                        return;
+                    }
+                    Log.d(TAG, "Balance: " + account.getBalance());
+                    Log.d(TAG, "Cost: " + getArguments().getFloat("costTotal"));
+                    _fooCBtn.setEnabled(true);
+                    _fooCBtn.setText("FooCash\n" + account.getName());
                 }
-                if (account.getBalance() < getArguments().getFloat("costTotal")) {
-                    _fooCBtn.setEnabled(false);
-                    _fooCBtn.setText("Insufficient funds");
-                    return;
-                }
-                Log.d(TAG, "Balance: " + account.getBalance());
-                Log.d(TAG, "Cost: " + getArguments().getFloat("costTotal"));
-                _fooCBtn.setEnabled(true);
-                _fooCBtn.setText("FooCash\n" + account.getName());
-            }
-        });
-
+            });
+        }
 
 
     }
@@ -228,5 +243,21 @@ public class PurchaseDialogFragment extends DialogFragment implements
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnPurchaseDialogInteractionListener) {
+            mListener = (OnPurchaseDialogInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnPurchaseDialogInteractionListener");
+        }
+    }
+
+    public interface OnPurchaseDialogInteractionListener {
+        void onPurchaseDialogDismiss();
+        void onPurchaseDialogPurchaseSuccess();
     }
 }

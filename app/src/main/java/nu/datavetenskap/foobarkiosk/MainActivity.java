@@ -16,13 +16,15 @@ import com.sumup.merchant.api.SumUpState;
 
 import nu.datavetenskap.foobarkiosk.fragments.AccountFragment;
 import nu.datavetenskap.foobarkiosk.fragments.CartFragment;
+import nu.datavetenskap.foobarkiosk.fragments.PurchaseDialogFragment;
 import nu.datavetenskap.foobarkiosk.fragments.StoreFragment;
 import nu.datavetenskap.foobarkiosk.fragments.WebViewFragment;
 
 public class MainActivity extends AppCompatActivity implements
         WebViewFragment.OnFragmentInteractionListener,
         CartFragment.OnCartInteractionListener,
-        AccountFragment.OnAccountInteractionListener {
+        AccountFragment.OnAccountInteractionListener,
+        PurchaseDialogFragment.OnPurchaseDialogInteractionListener {
     private static final String TAG = "MainActivity";
 
     @Override
@@ -122,5 +124,15 @@ public class MainActivity extends AppCompatActivity implements
         if (frag != null) {
             frag.returnFromProfile();
         }
+    }
+
+    @Override
+    public void onPurchaseDialogDismiss() {
+
+    }
+
+    @Override
+    public void onPurchaseDialogPurchaseSuccess() {
+
     }
 }

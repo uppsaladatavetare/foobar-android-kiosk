@@ -69,24 +69,42 @@ public class FoobarAPI {
         sendAPIRequest("/api/accounts/" + card + "/", Request.Method.GET, stringRequest);
     }
 
-    public static void sendPurchaseRequest(String purchaseBody) {
+    public static void sendCashPurchaseRequest(IState state) {
         checkCompleteness();
-        Log.d("FoobarAPI", "Body: " + purchaseBody);
-        sendAPIRequest("/api/purchases/", Request.Method.POST, purchaseBody,
+        sendPurchaseRequest(
+                constructPurchaseRequest(state, false),
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d("PurchaseRequest", response);
-
                     }
-        });
+                }
+                );
     }
 
-    public static String constructPurchaseRequest(IState state) {
+    public static void sendFooCashPurchaseRequest(IState state) {
+        checkCompleteness();
+        sendPurchaseRequest(
+                constructPurchaseRequest(state, true),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("PurchaseRequest", response);
+                    }
+                }
+        );
+    }
+
+    private static void sendPurchaseRequest(String purchaseBody, Response.Listener<String> responseListener) {
+        Log.d("FoobarAPI", "Body: " + purchaseBody);
+        sendAPIRequest("/api/purchases/", Request.Method.POST, purchaseBody, responseListener);
+    }
+
+    private static String constructPurchaseRequest(IState state, Boolean includeAccountID) {
         try {
 
             JSONObject json = new JSONObject();
-            if (state.getAccount() != null) {
+            if (includeAccountID) {
                 json.put("account_id", state.getAccount().getId());
             }
             else {

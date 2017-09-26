@@ -132,8 +132,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         FragmentManager fm = getActivity().getFragmentManager();
 
         // Create and show the dialog.
-        DialogFragment newFragment = PurchaseDialogFragment.newInstance(activeState,
-                FoobarAPI.constructPurchaseRequest(activeState));
+        DialogFragment newFragment = PurchaseDialogFragment.newInstance(activeState);
         newFragment.show(fm, "dialog");
 
     }
