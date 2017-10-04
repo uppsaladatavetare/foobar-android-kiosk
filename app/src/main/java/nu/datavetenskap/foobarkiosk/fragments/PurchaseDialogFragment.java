@@ -134,7 +134,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
     }
 
     private void testLogin() {
-        SumUpLogin sumUplogin = SumUpLogin.builder("6791e731-8aff-49e5-b49a-54b4ae23e4f5").build();
+        SumUpLogin sumUplogin = SumUpLogin.builder(getString(R.string.sumup_access_key)).build();
         SumUpAPI.openLoginActivity(getActivity(), sumUplogin, REQUEST_CODE_LOGIN);
     }
 
@@ -142,23 +142,19 @@ public class PurchaseDialogFragment extends DialogFragment implements
         SumUpPayment payment = SumUpPayment.builder()
                 // mandatory parameters
                 // Please go to https://me.sumup.com/developers to retrieve your Affiliate Key by entering the application ID of your app. (e.g. com.sumup.sdksampleapp)
-                .affiliateKey("6791e731-8aff-49e5-b49a-54b4ae23e4f5")
+                .affiliateKey(getString(R.string.sumup_access_key))
                 //.accessToken("YOUR_USER_TOKEN")
                 // Total purchase cost amount
-                .productAmount(13.37)
+                .productAmount(activeState.getPurchaseCost())
                 .currency(SumUpPayment.Currency.SEK)
                 // optional: include a tip amount in addition to the productAmount
                 //.tipAmount(0.10)
                 // optional: add details
-                //.productTitle("Billys Pizza")
-                .addAdditionalInfo("Billys Pizza", "13 kr")
+                .productTitle("Foobar Kiosk")
                 //.receiptEmail("customer@mail.com")
                 //.receiptSMS("+3531234567890")
                 // optional: Add metadata
-                //.productTitle("Delicatoboll")
-                .addAdditionalInfo("Delicatoboll", "6 kr")
-                //.productTitle("Kaffe")
-                .addAdditionalInfo("Kaffe", "5 kr")
+                //.addAdditionalInfo("Delicatoboll", "6 kr")
                 // optional: foreign transaction ID, must be unique!
                 .foreignTransactionId(UUID.randomUUID().toString())  // can not exceed 128 chars
                 // optional: skip the success screen
