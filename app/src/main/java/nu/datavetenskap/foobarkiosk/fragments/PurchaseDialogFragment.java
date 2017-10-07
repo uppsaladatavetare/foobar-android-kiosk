@@ -1,6 +1,7 @@
 package nu.datavetenskap.foobarkiosk.fragments;
 
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.sumup.merchant.api.SumUpAPI;
@@ -32,8 +35,10 @@ public class PurchaseDialogFragment extends DialogFragment implements
     private OnPurchaseDialogInteractionListener mListener;
     private static IState activeState;
     private static Gson gson;
+    private static ProgressDialog progressDialog;
 
-    @Bind(R.id.purchase_cash_btn) Button _cashBtn;
+    @Bind(R.id.purchase_cash_btn) LinearLayout _cashBtn;
+    @Bind(R.id.cash_image_id) ImageView _cashImg;
     @Bind(R.id.purchase_foocash_btn) Button _fooCBtn;
     @Bind(R.id.purchase_credit_btn) Button _creditBtn;
     @Bind(R.id.purchase_cancel_btn) Button _cancelBtn;
@@ -54,6 +59,8 @@ public class PurchaseDialogFragment extends DialogFragment implements
         _fooCBtn.setOnClickListener(this);
         _creditBtn.setOnClickListener(this);
         _cancelBtn.setOnClickListener(this);
+        _cashBtn.setEnabled(true);
+        _cashImg.setEnabled(true);
         return view;
     }
 
@@ -102,7 +109,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.purchase_cash_btn:
-                cashPurchase();
+                //cashPurchase();
                 break;
             case R.id.purchase_foocash_btn:
                 fooCashPurchase();
@@ -121,6 +128,11 @@ public class PurchaseDialogFragment extends DialogFragment implements
         //final String purchaseState = getArguments().getString("purchaseState");
         //FoobarAPI.sendCashPurchaseRequest(gson.fromJson(purchaseState, IState.class));
         FoobarAPI.sendCashPurchaseRequest(activeState);
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setIndeterminate(true);
+        //progressDialog.setMessage("Authenticating");
+        dismiss();
+        progressDialog.show();
     }
 
     private void fooCashPurchase() {

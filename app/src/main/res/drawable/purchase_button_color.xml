@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:exitFadeDuration="@android:integer/config_mediumAnimTime">
+
+    <!-- Enabled state -->
+    <item android:state_enabled="true">
+
+        <shape android:shape="rectangle">
+            <solid android:color="@color/green_enabled"/>
+            <corners android:radius="@dimen/selectable_rounded_rect_corner_radius"/>
+        </shape>
+
+    </item>
+
+    <!-- Disabled state -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/orange_warning"/>
+            <corners android:radius="@dimen/selectable_rounded_rect_corner_radius"/>
+        </shape>
+    </item>
+</selector>

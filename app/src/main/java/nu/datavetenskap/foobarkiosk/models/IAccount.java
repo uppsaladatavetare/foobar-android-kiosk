@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class IAccount {
     private String id;
     @SerializedName("user_id")      private String userId;
+    @SerializedName("can_take_card_payments")   private Boolean authenticatedForCardPayments;
     private String name;
     private Float balance;
     private String token;
