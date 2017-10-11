@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_enabled="false">
-        <inset android:drawable="@drawable/ic_error_outline_black_72dp"  android:insetTop="120dp" />
+        <inset android:drawable="@drawable/ic_error_outline_black_72dp"  />
     </item>
     <item>
-        <inset android:drawable="@drawable/ic_credit_card_black_72dp" android:insetTop="120dp" />
+        <inset android:drawable="@drawable/ic_credit_card_black_72dp" />
     </item>
 </selector>

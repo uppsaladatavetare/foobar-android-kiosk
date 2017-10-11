@@ -11,8 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.sumup.merchant.api.SumUpAPI;
@@ -23,6 +21,7 @@ import java.util.UUID;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import nu.datavetenskap.foobarkiosk.Elements.PurchaseButton;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.models.IAccount;
@@ -37,10 +36,9 @@ public class PurchaseDialogFragment extends DialogFragment implements
     private static Gson gson;
     private static ProgressDialog progressDialog;
 
-    @Bind(R.id.purchase_cash_btn) LinearLayout _cashBtn;
-    @Bind(R.id.cash_image_id) ImageView _cashImg;
-    @Bind(R.id.purchase_foocash_btn) Button _fooCBtn;
-    @Bind(R.id.purchase_credit_btn) Button _creditBtn;
+    @Bind(R.id.purchase_cash_btn) PurchaseButton _cashBtn;
+    @Bind(R.id.purchase_foocash_btn) PurchaseButton _fooCBtn;
+    @Bind(R.id.purchase_credit_btn) PurchaseButton _creditBtn;
     @Bind(R.id.purchase_cancel_btn) Button _cancelBtn;
 
     @Nullable
@@ -59,8 +57,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
         _fooCBtn.setOnClickListener(this);
         _creditBtn.setOnClickListener(this);
         _cancelBtn.setOnClickListener(this);
-        _cashBtn.setEnabled(true);
-        _cashImg.setEnabled(true);
+        //_cashBtn.setEnabled(true);
         return view;
     }
 
