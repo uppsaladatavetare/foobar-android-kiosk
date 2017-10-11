@@ -1,7 +1,7 @@
 package nu.datavetenskap.foobarkiosk.fragments;
 
-import android.app.DialogFragment;
-import android.app.ProgressDialog;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.android.volley.Response;
 import com.google.gson.Gson;
 import com.sumup.merchant.api.SumUpAPI;
 import com.sumup.merchant.api.SumUpLogin;
@@ -34,7 +35,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
     private OnPurchaseDialogInteractionListener mListener;
     private static IState activeState;
     private static Gson gson;
-    private static ProgressDialog progressDialog;
+    private ResponseDialog responseDialog;
 
     @Bind(R.id.purchase_cash_btn) PurchaseButton _cashBtn;
     @Bind(R.id.purchase_foocash_btn) PurchaseButton _fooCBtn;
@@ -49,15 +50,16 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
         ButterKnife.bind(this, view);
 
-//        Log.d(TAG, "Cost1: " + getArguments().getFloat("costTotal"));
-//        Log.d(TAG, "Cost2: " + getArguments().getFloat("costTotal"));
         determineFooCashAbility();
 
         _cashBtn.setOnClickListener(this);
         _fooCBtn.setOnClickListener(this);
         _creditBtn.setOnClickListener(this);
         _cancelBtn.setOnClickListener(this);
-        //_cashBtn.setEnabled(true);
+
+        _creditBtn.setEnabled(false);
+        _creditBtn.setText("To be announced later");
+
         return view;
     }
 
@@ -106,7 +108,15 @@ public class PurchaseDialogFragment extends DialogFragment implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.purchase_cash_btn:
-                //cashPurchase();
+                cashPurchase();
+                // DialogFragment.show() will take care of adding the fragment
+                // in a transaction.
+                dismiss();
+                FragmentManager fm = getFragmentManager();
+
+                // Create and show the dialog.
+                responseDialog = new ResponseDialog();
+                responseDialog.show(fm, "dialog");
                 break;
             case R.id.purchase_foocash_btn:
                 fooCashPurchase();
@@ -124,12 +134,14 @@ public class PurchaseDialogFragment extends DialogFragment implements
     private void cashPurchase() {
         //final String purchaseState = getArguments().getString("purchaseState");
         //FoobarAPI.sendCashPurchaseRequest(gson.fromJson(purchaseState, IState.class));
-        FoobarAPI.sendCashPurchaseRequest(activeState);
-        progressDialog = new ProgressDialog(getActivity());
-        progressDialog.setIndeterminate(true);
-        //progressDialog.setMessage("Authenticating");
+        FoobarAPI.sendCashPurchaseRequest(activeState,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        responseDialog.onSuccess();
+                    }
+                });
         dismiss();
-        progressDialog.show();
     }
 
     private void fooCashPurchase() {
@@ -259,6 +271,10 @@ public class PurchaseDialogFragment extends DialogFragment implements
             throw new RuntimeException(context.toString()
                     + " must implement OnPurchaseDialogInteractionListener");
         }
+    }
+
+    public interface OnPurchaseSuccessInterationListener {
+        void onPurchaseSuccess(float purchase);
     }
 
     public interface OnPurchaseDialogInteractionListener {

@@ -69,17 +69,10 @@ public class FoobarAPI {
         sendAPIRequest("/api/accounts/" + card + "/", Request.Method.GET, stringRequest);
     }
 
-    public static void sendCashPurchaseRequest(IState state) {
+    public static void sendCashPurchaseRequest(IState state, Response.Listener<String> onResponse) {
         checkCompleteness();
         sendPurchaseRequest(
-                constructPurchaseRequest(state, false),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("PurchaseRequest", response);
-                    }
-                }
-                );
+                constructPurchaseRequest(state, false), onResponse);
     }
 
     public static void sendFooCashPurchaseRequest(IState state) {

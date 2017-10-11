@@ -1,13 +1,12 @@
 package nu.datavetenskap.foobarkiosk.fragments;
 
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -129,10 +128,10 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private void runPurchase() {
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.
-        FragmentManager fm = getActivity().getFragmentManager();
+        FragmentManager fm = getFragmentManager();
 
         // Create and show the dialog.
-        DialogFragment newFragment = PurchaseDialogFragment.newInstance(activeState);
+        PurchaseDialogFragment newFragment = PurchaseDialogFragment.newInstance(activeState);
         newFragment.show(fm, "dialog");
 
     }
@@ -237,16 +236,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.cart_clear_btn) {
-            if (_acc != null) {
-                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
-                ft.remove(_acc).commit();
-                _acc = null;
-            }
-            buttonsSetEnable(false);
-            activeState.clearState();
-            cartAdapter.notifyDataSetChanged();
-            FoobarAPI.sendStateToThunderpush(activeState);
+            clearCart();
             return;
         }
         for (IProduct p : productList) {
@@ -271,6 +261,19 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                     break;
             }
         }
+        cartAdapter.notifyDataSetChanged();
+        FoobarAPI.sendStateToThunderpush(activeState);
+    }
+
+    public void clearCart() {
+        if (_acc != null) {
+            FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
+            ft.remove(_acc).commit();
+            _acc = null;
+        }
+        buttonsSetEnable(false);
+        activeState.clearState();
         cartAdapter.notifyDataSetChanged();
         FoobarAPI.sendStateToThunderpush(activeState);
     }
@@ -334,7 +337,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         public void parseNewCard(final String data){
             IAccount account = retrieveAccountFromCard(data);
 
-            PurchaseDialogFragment frag = (PurchaseDialogFragment) getActivity().getFragmentManager().findFragmentByTag("dialog");
+            PurchaseDialogFragment frag = (PurchaseDialogFragment) getFragmentManager().findFragmentByTag("dialog");
             if (frag != null) {
                 frag.updateAccessRights(account);
             }
