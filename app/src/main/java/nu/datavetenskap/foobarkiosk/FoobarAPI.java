@@ -75,17 +75,10 @@ public class FoobarAPI {
                 constructPurchaseRequest(state, false), onResponse);
     }
 
-    public static void sendFooCashPurchaseRequest(IState state) {
+    public static void sendFooCashPurchaseRequest(IState state, Response.Listener<String> onResponse) {
         checkCompleteness();
         sendPurchaseRequest(
-                constructPurchaseRequest(state, true),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("PurchaseRequest", response);
-                    }
-                }
-        );
+                constructPurchaseRequest(state, true), onResponse);
     }
 
     private static void sendPurchaseRequest(String purchaseBody, Response.Listener<String> responseListener) {

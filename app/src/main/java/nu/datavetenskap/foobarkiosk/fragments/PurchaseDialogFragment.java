@@ -138,7 +138,8 @@ public class PurchaseDialogFragment extends DialogFragment implements
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        responseDialog.onSuccess();
+                        responseDialog.onSuccess(activeState.getPurchaseCost());
+                        mListener.onPurchaseSuccess();
                     }
                 });
         dismiss();
@@ -147,7 +148,14 @@ public class PurchaseDialogFragment extends DialogFragment implements
     private void fooCashPurchase() {
 //        final String purchaseState = getArguments().getString("purchaseState");
 //        FoobarAPI.sendCashPurchaseRequest(gson.fromJson(purchaseState, IState.class));
-        FoobarAPI.sendFooCashPurchaseRequest(activeState);
+        FoobarAPI.sendFooCashPurchaseRequest(activeState,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        responseDialog.onSuccess(activeState.getPurchaseCost(), activeState.getAccount());
+                        mListener.onPurchaseSuccess();
+                    }
+                });
     }
 
     private void creditCardPurchase() {
@@ -273,11 +281,9 @@ public class PurchaseDialogFragment extends DialogFragment implements
         }
     }
 
-    public interface OnPurchaseSuccessInterationListener {
-        void onPurchaseSuccess(float purchase);
-    }
 
     public interface OnPurchaseDialogInteractionListener {
+        void onPurchaseSuccess();
         void onPurchaseDialogDismiss();
         void onPurchaseDialogPurchaseSuccess();
     }

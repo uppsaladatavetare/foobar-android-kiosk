@@ -127,6 +127,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onPurchaseSuccess() {
+        CartFragment frag = (CartFragment) getSupportFragmentManager().findFragmentById(R.id.store_sidebar);
+        if (frag != null) {
+            frag.clearCart();
+        }
+    }
+
+    @Override
     public void onPurchaseDialogDismiss() {
 
     }
