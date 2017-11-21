@@ -96,7 +96,7 @@ public class ResponseDialog extends DialogFragment implements View.OnClickListen
                     fragment.clearCart();
                 }
 
-                dismissalHandler.postDelayed(dismissalRunner, 90000);
+                dismissalHandler.postDelayed(dismissalRunner, 4000);
 
 
             }
