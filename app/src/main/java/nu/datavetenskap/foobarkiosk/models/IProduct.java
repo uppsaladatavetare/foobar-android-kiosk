@@ -13,6 +13,17 @@ public class IProduct extends Product {
         failed = false;
     }
 
+    private IProduct() {
+        super();
+        selected = false;
+        loading  =false;
+        failed = true;
+    }
+
+    public static IProduct fakeProduct() {
+        return new IProduct();
+    }
+
     public void incrementAmount() {
         this.qty++;
     }

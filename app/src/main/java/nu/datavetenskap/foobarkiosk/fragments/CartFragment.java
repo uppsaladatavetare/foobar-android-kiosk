@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -152,6 +153,22 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         return account[0];
     }
 
+    public void retrieveProductFromBarcode(final String data) {
+        FoobarAPI.getProductFromBarcode(data, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("StringRequest", response);
+                Gson gson = new Gson();
+                Product[] p = gson.fromJson(response, Product[].class);
+
+                if (p.length > 0) {
+                    addProductToCart(p[0]);
+                }
+                else {addFakeProductToCart();}
+            }
+        });
+    }
+
     private void addAccountFragment(IAccount account) {
         _acc = AccountFragment.newInstance(account);
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
@@ -161,7 +178,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
 
     public void addProductToCart(Product prod) {
-        Log.d(TAG, "Add product to cart");
+        //Log.d(TAG, "Add product to cart");
         for (int i = 0; i < productList.size(); i++) {
             if (productList.get(i).equals(prod)) {
                 productList.get(i).incrementAmount();
@@ -178,6 +195,25 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         }
 
         FoobarAPI.sendStateToThunderpush(activeState);
+
+    }
+
+    private void addFakeProductToCart() {
+        final IProduct p = IProduct.fakeProduct();
+        productList.add(p);
+        cartAdapter.notifyItemInserted(productList.size());
+        if (activeState.getPurchaseState().equals(PurchaseState.WAITING)) {
+            activeState.setPurchaseState(PurchaseState.ONGOING);
+            buttonsSetEnable(true);
+        }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                productList.remove(p);
+                cartAdapter.notifyDataSetChanged();
+            }
+        }, 2000);
 
     }
 
@@ -199,13 +235,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         _decBtn.setEnabled(b);
         _delBtn.setEnabled(b);
     }
-
-    private void updateState() {
-        Log.d("CartFragment", "State updated");
-
-
-    }
-
 
 
 
@@ -345,16 +374,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
         @JavascriptInterface
         public void parseNewProduct(final String data){
-            FoobarAPI.getProductFromBarcode(data, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.d("StringRequest", response);
-                    Gson gson = new Gson();
-                    Product p = gson.fromJson(response, Product.class);
-
-                    addProductToCart(p);
-                }
-            });
+            retrieveProductFromBarcode(data);
         }
     }
 }
