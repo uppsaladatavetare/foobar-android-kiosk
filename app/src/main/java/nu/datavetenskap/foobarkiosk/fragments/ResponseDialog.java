@@ -28,6 +28,7 @@ public class ResponseDialog extends DialogFragment implements View.OnClickListen
     @Bind(R.id.response_dialog_cancelBtn) Button _cancelBtn;
     @Bind(R.id.response_dialog_image) ImageView _img;
 
+    private boolean dismissible = false;
     private Handler dismissalHandler;
     private Runnable dismissalRunner = new Runnable() {
         @Override
@@ -70,6 +71,7 @@ public class ResponseDialog extends DialogFragment implements View.OnClickListen
         super.dismiss();
     }
 
+    public boolean isDismissible() {return dismissible;}
 
     public void onSuccess(final float p) { onSuccess(p, null); }
 
@@ -94,9 +96,20 @@ public class ResponseDialog extends DialogFragment implements View.OnClickListen
                 CartFragment fragment = (CartFragment) getFragmentManager().findFragmentById(R.id.store_sidebar);
                 if (fragment != null) {
                     fragment.clearCart();
+                    dismissible = true;
                 }
 
                 dismissalHandler.postDelayed(dismissalRunner, 4000);
+
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        CartFragment fragment = (CartFragment) getFragmentManager().findFragmentById(R.id.store_sidebar);
+//                        if (fragment != null) {
+//                            fragment.retrieveProductFromBarcode("7310500088853");
+//                        }
+//                    }
+//                }, 2000);
 
 
             }

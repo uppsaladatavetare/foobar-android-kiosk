@@ -79,7 +79,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
     }
 
-    public static PurchaseDialogFragment newInstance(IState state) {
+    public static PurchaseDialogFragment newInstance(IState state, ResponseDialog _responseDialog) {
         PurchaseDialogFragment f = new PurchaseDialogFragment();
 
         // Supply index input as an argument.
@@ -96,6 +96,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
         }
         gson = new Gson();
         activeState = state;
+        f.responseDialog = _responseDialog;
         args.putString("purchaseState", gson.toJson(state));
         args.putFloat("costTotal", state.getPurchaseCost());
         f.setArguments(args);
@@ -115,7 +116,6 @@ public class PurchaseDialogFragment extends DialogFragment implements
                 FragmentManager fm = getFragmentManager();
 
                 // Create and show the dialog.
-                responseDialog = new ResponseDialog();
                 responseDialog.show(fm, "dialog");
                 break;
             case R.id.purchase_foocash_btn:

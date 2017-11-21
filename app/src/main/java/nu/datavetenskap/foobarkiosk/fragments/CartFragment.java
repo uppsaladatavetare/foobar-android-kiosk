@@ -52,6 +52,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private SharedPreferences preferences;
     private IState activeState;
     private String purchaseStateCache;
+    private ResponseDialog responseDialog;
 
 
     @Bind(R.id.cart_product_list) RecyclerView _cart;
@@ -132,12 +133,13 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         FragmentManager fm = getFragmentManager();
 
         // Create and show the dialog.
-        PurchaseDialogFragment newFragment = PurchaseDialogFragment.newInstance(activeState);
+        responseDialog = new ResponseDialog();
+        PurchaseDialogFragment newFragment = PurchaseDialogFragment.newInstance(activeState, responseDialog);
         newFragment.show(fm, "dialog");
 
     }
 
-    public IAccount retrieveAccountFromCard(final String card) {
+    public void retrieveAccountFromCard(final String card) {
         final IAccount[] account = {null};
         FoobarAPI.getAccountFromCard(card, new Response.Listener<String>() {
             @Override
@@ -148,9 +150,17 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
                 account[0].setCardId(card);
                 updateState(account[0]);
+
+                PurchaseDialogFragment frag = (PurchaseDialogFragment) getFragmentManager().findFragmentByTag("dialog");
+                if (frag != null) {
+                    frag.updateAccessRights(account[0]);
+                }
+
+                if (responseDialog != null && responseDialog.isDismissible()) {
+                    responseDialog.dismiss();
+                }
             }
         });
-        return account[0];
     }
 
     public void retrieveProductFromBarcode(final String data) {
@@ -165,6 +175,9 @@ public class CartFragment extends Fragment implements View.OnClickListener {
                     addProductToCart(p[0]);
                 }
                 else {addFakeProductToCart();}
+                if (responseDialog != null && responseDialog.isDismissible()) {
+                    responseDialog.dismiss();
+                }
             }
         });
     }
@@ -364,12 +377,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
         @JavascriptInterface
         public void parseNewCard(final String data){
-            IAccount account = retrieveAccountFromCard(data);
-
-            PurchaseDialogFragment frag = (PurchaseDialogFragment) getFragmentManager().findFragmentByTag("dialog");
-            if (frag != null) {
-                frag.updateAccessRights(account);
-            }
+            retrieveAccountFromCard(data);
         }
 
         @JavascriptInterface
