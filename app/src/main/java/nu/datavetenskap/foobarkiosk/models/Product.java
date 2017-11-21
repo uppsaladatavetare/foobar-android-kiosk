@@ -25,6 +25,14 @@ public class Product {
         image = p. image;
     }
 
+    protected Product() {
+        id = "0000";
+        name = "Unknown Item";
+        description = "Unknown Item";
+        price = 0;
+        qty = 1;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Product) {

@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,19 +15,20 @@ import com.android.volley.Response;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.adapters.StoreAdapter;
-import nu.datavetenskap.foobarkiosk.models.IAccount;
 import nu.datavetenskap.foobarkiosk.models.Product;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class StoreFragment extends Fragment {
+    private static final int PRODUCT_COLUMNS = 4;
 
     CartFragment cartFragment;
 
@@ -40,6 +40,7 @@ public class StoreFragment extends Fragment {
     @Bind(R.id.btn_send_state) Button _btnState;
     @Bind(R.id.btn_get_card) Button _btncard;
     @Bind(R.id.grid_view) RecyclerView _grid;
+    @Bind(R.id.btn_get_random) Button _btnRand;
 
     public StoreFragment() {
     }
@@ -55,7 +56,7 @@ public class StoreFragment extends Fragment {
 
         storeProductList = new ArrayList<>();
 
-        mgridLayoutManager = new GridLayoutManager(getActivity(), 4);
+        mgridLayoutManager = new GridLayoutManager(getActivity(), PRODUCT_COLUMNS);
         _grid.setLayoutManager(mgridLayoutManager);
         storeAdapter = new StoreAdapter(getContext(), storeProductList,
                 pref.getString(getString(R.string.pref_key_fooapi_host), ""));
@@ -86,7 +87,7 @@ public class StoreFragment extends Fragment {
             public void onClick(View v) {
 
                 //updateStateWithThunderClient();
-                updateStateWithVolley();
+                //updateStateWithVolley();
 
             }
         });
@@ -94,6 +95,17 @@ public class StoreFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 cartFragment.retrieveAccountFromCard("1337");
+            }
+        });
+
+        _btnRand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] text = {"7340083438684", "7611612221351", "7310500088853", "1234567890"};
+                Random r = new Random();
+                int i = r.nextInt(text.length);
+
+                cartFragment.retrieveProductFromBarcode(text[i]);
             }
         });
 
@@ -107,8 +119,8 @@ public class StoreFragment extends Fragment {
         Gson gson = new Gson();
         Product[] products = gson.fromJson(str, Product[].class);
 
-        for (int i = 0; i < products.length; ++i) {
-            storeProductList.add(products[i]);
+        for (Product product : products) {
+            storeProductList.add(product);
             storeAdapter.notifyItemInserted(storeProductList.size());
 
         }
@@ -123,46 +135,6 @@ public class StoreFragment extends Fragment {
                 addAllProducts(response);
             }
         });
-    }
-
-    private void retrieveAccountFromCard(final String card) {
-        FoobarAPI.getAccountFromCard(card, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d("StringRequest", response);
-                Gson gson = new Gson();
-                IAccount account = gson.fromJson(response, IAccount.class);
-
-                account.setCardId(card);
-            }
-        });
-    }
-
-    private void retrieveProductFromBarcode(String barcode) {
-
-        FoobarAPI.getProductFromBarcode(barcode, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d("StringRequest", response);
-
-//                CartFragment cartFrag = (CartFragment)
-//                        getChildFragmentManager().findFragmentById(R.id.store_sidebar);
-//                if (cartFrag != null ) {
-//                    cartFrag.addProductToCart();
-//                }
-//                else {
-//                    throw new RuntimeException(
-//                            "Removed CartFragment from layout but not redirected method" );
-//                }
-            }
-        });
-    }
-
-    private void updateStateWithVolley() {
-        final String stateTest = "{\"state\":{\"account\":{},\"products\":{\"products\":[{\"code\":\"7310500088853\",\"selected\":false,\"loading\":false,\"id\":\"e963428a-d719-422b-8d6e-5c062fe822e3\",\"name\":\"Bilys pizza\",\"qty\":1,\"price\":13,\"image\":\"http://localhost:7331/localhost:8000/media/product/7310500088853.png\"},{\"code\":\"7611612221351\",\"selected\":false,\"loading\":false,\"id\":\"4cd81a41-4e13-4b63-b833-da59dfe0faeb\",\"name\":\"Pepsi Max Ginger\",\"qty\":1,\"price\":7,\"image\":\"http://localhost:7331/localhost:8000null\"},{\"code\":\"7340083438684\",\"selected\":false,\"loading\":false,\"id\":\"7f5b3961-3654-40ad-9cea-fe0f35eb926c\",\"name\":\"Delicatoboll\",\"qty\":1,\"price\":6,\"image\":\"http://localhost:7331/localhost:8000/media/product/7340083438684.png\"}],\"page\":0,\"maxPage\":0},\"purchase\":{\"state\":\"ONGOING\"}}}";
-
-        //TODO: make it so method require IState later on
-        //FoobarAPI.sendStateToThunderpush(stateTest);
     }
 
 

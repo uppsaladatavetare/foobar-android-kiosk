@@ -36,6 +36,15 @@
         android:id="@+id/btn_get_card"
         android:text="swipe a card"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/btn_get_card"
+        android:clickable="true"
+        android:id="@+id/btn_get_random"
+        android:text="Random Product"/>
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
