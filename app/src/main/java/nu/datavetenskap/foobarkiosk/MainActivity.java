@@ -18,14 +18,19 @@ import nu.datavetenskap.foobarkiosk.fragments.AccountFragment;
 import nu.datavetenskap.foobarkiosk.fragments.CartFragment;
 import nu.datavetenskap.foobarkiosk.fragments.PurchaseDialogFragment;
 import nu.datavetenskap.foobarkiosk.fragments.StoreFragment;
+import nu.datavetenskap.foobarkiosk.fragments.TellerFragment;
 import nu.datavetenskap.foobarkiosk.fragments.WebViewFragment;
 
 public class MainActivity extends AppCompatActivity implements
         WebViewFragment.OnFragmentInteractionListener,
         CartFragment.OnCartInteractionListener,
         AccountFragment.OnAccountInteractionListener,
-        PurchaseDialogFragment.OnPurchaseDialogInteractionListener {
+        PurchaseDialogFragment.OnPurchaseDialogInteractionListener,
+        TellerFragment.OnTellerInteractionListener,
+        ThunderListener.ThunderListenerInteraction {
     private static final String TAG = "MainActivity";
+    Fragment mainFragment;
+    private CartFragment cart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements
             // Create a new Fragment to be placed in the activity layout
             // Add the fragment to the 'fragment_container' FrameLayout
             if (fragChoice != null) {
-                Fragment mainFragment;
+
                 if (fragChoice.equals("web")) {
                     mainFragment = new WebViewFragment();
                     getSupportFragmentManager().beginTransaction()
@@ -61,14 +66,27 @@ public class MainActivity extends AppCompatActivity implements
                     mainFragment = new StoreFragment();
                     getSupportFragmentManager().beginTransaction()
                             .add(R.id.fragment_container, mainFragment).commit();
+
+                    ThunderListener.getInstance(this);
                 }
             }
         }
 
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        VolleySingleton.Destroy();
+        ThunderListener.Destroy();
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        cart = (CartFragment) mainFragment.getChildFragmentManager().findFragmentById(R.id.store_sidebar);
     }
 
     @Override
@@ -96,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onTellerInteraction(Uri uri) {
 
     }
 
@@ -112,35 +130,41 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onAccountProfileDialogOpen() {
-        CartFragment frag = (CartFragment) getSupportFragmentManager().findFragmentById(R.id.store_sidebar);
-        if (frag != null) {
-            frag.sendProfileState();
+        if (cart != null) {
+            cart.sendProfileState();
         }
     }
 
     @Override
     public void onAccountProfileDialogDismissed() {
-        CartFragment frag = (CartFragment) getSupportFragmentManager().findFragmentById(R.id.store_sidebar);
-        if (frag != null) {
-            frag.returnFromProfile();
+        if (cart != null) {
+            cart.returnFromProfile();
         }
     }
 
     @Override
     public void onPurchaseSuccess() {
-        CartFragment frag = (CartFragment) getSupportFragmentManager().findFragmentById(R.id.store_sidebar);
-        if (frag != null) {
-            frag.clearCart();
+        if (cart != null) {
+            cart.clearCart();
         }
     }
 
     @Override
-    public void onPurchaseDialogDismiss() {
-
+    public void retrieveAccountFromCard(String data) {
+        if (cart != null) {
+            cart.retrieveAccountFromCard(data);
+        }
     }
 
     @Override
-    public void onPurchaseDialogPurchaseSuccess() {
+    public void retrieveProductFromBarcode(String data) {
+        if (cart != null) {
+            cart.retrieveProductFromBarcode(data);
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }

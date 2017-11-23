@@ -187,7 +187,7 @@ public class FoobarAPI {
         queue.add(stringReq);
     }
 
-    private static void sendThunderMsgChannel(String channel, final String Msg) {
+    public static void sendThunderMsgChannel(String channel, final String Msg) {
         Log.d("FoobarAPI", "Send to thunderpush: " + Msg);
         StringRequest stringReq = new StringRequest(Request.Method.POST,
                 THUNDER_URL + channel,

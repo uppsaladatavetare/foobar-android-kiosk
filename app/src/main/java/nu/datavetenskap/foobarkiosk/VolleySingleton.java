@@ -61,4 +61,9 @@ public class VolleySingleton {
     public <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);
     }
+
+    public static void Destroy() {
+        mInstance = null;
+        mContext = null;
+    }
 }

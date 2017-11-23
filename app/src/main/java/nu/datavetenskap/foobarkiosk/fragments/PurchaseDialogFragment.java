@@ -284,7 +284,5 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
     public interface OnPurchaseDialogInteractionListener {
         void onPurchaseSuccess();
-        void onPurchaseDialogDismiss();
-        void onPurchaseDialogPurchaseSuccess();
     }
 }

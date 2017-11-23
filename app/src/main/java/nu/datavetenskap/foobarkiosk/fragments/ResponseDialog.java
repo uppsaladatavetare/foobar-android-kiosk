@@ -93,11 +93,7 @@ public class ResponseDialog extends DialogFragment implements View.OnClickListen
                 _text.setVisibility(View.VISIBLE);
                 _cancelBtn.setVisibility(View.VISIBLE);
 
-                CartFragment fragment = (CartFragment) getFragmentManager().findFragmentById(R.id.store_sidebar);
-                if (fragment != null) {
-                    fragment.clearCart();
-                    dismissible = true;
-                }
+                dismissible = true;
 
                 dismissalHandler.postDelayed(dismissalRunner, 4000);
 

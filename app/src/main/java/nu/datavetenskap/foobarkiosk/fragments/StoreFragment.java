@@ -88,6 +88,7 @@ public class StoreFragment extends Fragment {
 
                 //updateStateWithThunderClient();
                 //updateStateWithVolley();
+                FoobarAPI.sendThunderMsgChannel("products/", "7340083438684");
 
             }
         });

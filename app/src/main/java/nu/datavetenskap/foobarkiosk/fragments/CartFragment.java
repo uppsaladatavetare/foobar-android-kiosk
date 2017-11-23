@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -36,7 +35,6 @@ import nu.datavetenskap.foobarkiosk.models.IProduct;
 import nu.datavetenskap.foobarkiosk.models.Product;
 import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
 import nu.datavetenskap.foobarkiosk.models.statemodels.PurchaseState;
-import nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference;
 
 /**
  * A fragment with a Google +1 button.
@@ -75,9 +73,9 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        final String host = preferences.getString(ThunderClientDialogPreference.PREF_IP, "");
-        final String clientKey = preferences.getString(ThunderClientDialogPreference.PREF_PUBLIC, "");
-        _web.loadDataWithBaseURL("file:///android_asset/", webCode(host, clientKey), "text/html", "UTF-8", null);
+//        final String host = preferences.getString(ThunderClientDialogPreference.PREF_IP, "");
+//        final String clientKey = preferences.getString(ThunderClientDialogPreference.PREF_PUBLIC, "");
+//        _web.loadDataWithBaseURL("file:///android_asset/", webCode(host, clientKey), "text/html", "UTF-8", null);
     }
 
     @Override
@@ -91,14 +89,14 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 
-        _web = new WebView(getContext().getApplicationContext());
-        WebView.setWebContentsDebuggingEnabled(true);
-
-
-        WebSettings webSettings = _web.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setAllowUniversalAccessFromFileURLs(true);
-        _web.addJavascriptInterface(new WebAppInterface(getContext().getApplicationContext()), "Android");
+//        _web = new WebView(getContext().getApplicationContext());
+//        WebView.setWebContentsDebuggingEnabled(true);
+//
+//
+//        WebSettings webSettings = _web.getSettings();
+//        webSettings.setJavaScriptEnabled(true);
+//        webSettings.setAllowUniversalAccessFromFileURLs(true);
+//        _web.addJavascriptInterface(new WebAppInterface(getContext().getApplicationContext()), "Android");
         activeState = new IState();
 
         mLinearLayoutManager = new LinearLayoutManager(this.getContext());
