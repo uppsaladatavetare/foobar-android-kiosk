@@ -52,7 +52,7 @@ public class IState {
     public float getPurchaseCost() {
         float cost = 0;
         for (IProduct p : getProducts()) {
-            cost += p.getPrice();
+            cost += p.getQty() * p.getPrice();
         }
         return cost;
     }

@@ -14,10 +14,15 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import nu.datavetenskap.foobarkiosk.models.IProduct;
 import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
 import nu.datavetenskap.foobarkiosk.preferences.ThunderClientDialogPreference;
 
@@ -51,12 +56,12 @@ public class FoobarAPI {
 
     public static void getProducts(Response.Listener<String> onResponse) {
         checkCompleteness();
-        sendAPIRequest("/api/products/", onResponse);
+        sendAPIRequest("/api/products/", Request.Method.GET, onResponse);
     }
 
     public static void getProductFromBarcode(String barcode, Response.Listener<String> onResponse) {
         checkCompleteness();
-        sendAPIRequest("/api/products/?code=" + barcode, onResponse);
+        sendAPIRequest("/api/products/?code=" + barcode, Request.Method.GET, onResponse);
     }
 
     public static void getCategories(Response.Listener<String> onResponse) {
@@ -66,7 +71,53 @@ public class FoobarAPI {
 
     public static void getAccountFromCard(String card, Response.Listener<String> stringRequest) {
         checkCompleteness();
-        sendAPIRequest("/api/accounts/" + card + "/", stringRequest);
+        sendAPIRequest("/api/accounts/" + card + "/", Request.Method.GET, stringRequest);
+    }
+
+    public static void sendCashPurchaseRequest(IState state, Response.Listener<String> onResponse) {
+        checkCompleteness();
+        sendPurchaseRequest(
+                constructPurchaseRequest(state, false), onResponse);
+    }
+
+    public static void sendFooCashPurchaseRequest(IState state, Response.Listener<String> onResponse) {
+        checkCompleteness();
+        sendPurchaseRequest(
+                constructPurchaseRequest(state, true), onResponse);
+    }
+
+    private static void sendPurchaseRequest(String purchaseBody, Response.Listener<String> responseListener) {
+        Log.d("FoobarAPI", "Body: " + purchaseBody);
+        sendAPIRequest("/api/purchases/", Request.Method.POST, purchaseBody, responseListener);
+    }
+
+    private static String constructPurchaseRequest(IState state, Boolean includeAccountID) {
+        try {
+
+            JSONObject json = new JSONObject();
+            if (includeAccountID) {
+                json.put("account_id", state.getAccount().getId());
+            }
+            else {
+                json.put("account_id", JSONObject.NULL);
+            }
+            JSONArray arr = new JSONArray();
+            for (IProduct p : state.getProducts()) {
+                if (p.isReady()) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("id", p.getId());
+                    obj.put("qty", p.getQty());
+                    arr.put(obj);
+                }
+            }
+            json.put("products", arr);
+
+            Log.d("FoobarAPI", json.toString());
+            return json.toString();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static void sendStateToThunderpush(IState state) {
@@ -81,10 +132,10 @@ public class FoobarAPI {
 
 
 
-    private static void sendAPIRequest(String apiPath, Response.Listener<String> onResponse) {
+    private static void sendAPIRequest(String apiPath, int requestMethod, Response.Listener<String> onResponse) {
         final String url = API_HOST + apiPath;
 
-        StringRequest stringReq = new StringRequest(Request.Method.GET,
+        StringRequest stringReq = new StringRequest(requestMethod,
                 url, onResponse,
                 new Response.ErrorListener() {
                     @Override
@@ -99,6 +150,43 @@ public class FoobarAPI {
                 //headers.put("Content-Type", "application/json");
                 headers.put("Authorization", API_AUTH);
                 return headers;
+            }
+        };
+        queue.add(stringReq);
+    }
+
+    private static void sendAPIRequest(String apiPath, int requestMethod, final String jsonBody, Response.Listener<String> onResponse) {
+        final String url = API_HOST + apiPath;
+
+        StringRequest stringReq = new StringRequest(requestMethod,
+                url, onResponse,
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        try {
+                            String s = new String(error.networkResponse.data, "UTF-8");
+                            Log.e("VolleyError", s);
+                        } catch (UnsupportedEncodingException ignore) {}
+                    }
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/json");
+                headers.put("Authorization", API_AUTH);
+                return headers;
+            }
+
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    return jsonBody.getBytes("utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", jsonBody, "utf-8");
+                    return null;
+
+                }
             }
         };
         queue.add(stringReq);

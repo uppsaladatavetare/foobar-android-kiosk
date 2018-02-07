@@ -2,4 +2,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="account_fragment_size">50dp</dimen>
     <dimen name="account_text_size">20sp</dimen>
+
+    <!-- Selectable Items -->
+    <dimen name="selectable_rounded_rect_corner_radius">3dp</dimen>
 </resources>

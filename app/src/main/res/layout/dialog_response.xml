@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="400dp"
+    android:minHeight="200dp"
+    android:padding="20dp"
+    android:layout_gravity="center">
+
+    <ProgressBar
+        android:id="@+id/response_dialog_spinner"
+        android:indeterminate="true"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="10dp" />
+    <ImageView
+        android:id="@+id/response_dialog_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="10dp"
+        android:src="@drawable/ic_done_lime_24dp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/response_dialog_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:visibility="gone" />
+    <Button
+        android:id="@+id/response_dialog_cancelBtn"
+        android:layout_marginTop="30dp"
+        android:padding="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        android:textSize="22sp"
+        android:textAlignment="center"
+        android:text="@string/dialog_response_close"/>
+
+</LinearLayout>

@@ -1,13 +1,13 @@
 package nu.datavetenskap.foobarkiosk.fragments;
 
-import android.app.DialogFragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,6 +52,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private SharedPreferences preferences;
     private IState activeState;
     private String purchaseStateCache;
+    private ResponseDialog responseDialog;
 
 
     @Bind(R.id.cart_product_list) RecyclerView _cart;
@@ -129,15 +130,16 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private void runPurchase() {
         // DialogFragment.show() will take care of adding the fragment
         // in a transaction.
-        FragmentManager fm = getActivity().getFragmentManager();
+        FragmentManager fm = getFragmentManager();
 
         // Create and show the dialog.
-        DialogFragment newFragment = PurchaseDialogFragment.newInstance(activeState);
+        responseDialog = new ResponseDialog();
+        PurchaseDialogFragment newFragment = PurchaseDialogFragment.newInstance(activeState, responseDialog);
         newFragment.show(fm, "dialog");
 
     }
 
-    public IAccount retrieveAccountFromCard(final String card) {
+    public void retrieveAccountFromCard(final String card) {
         final IAccount[] account = {null};
         FoobarAPI.getAccountFromCard(card, new Response.Listener<String>() {
             @Override
@@ -148,9 +150,36 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
                 account[0].setCardId(card);
                 updateState(account[0]);
+
+                PurchaseDialogFragment frag = (PurchaseDialogFragment) getFragmentManager().findFragmentByTag("dialog");
+                if (frag != null) {
+                    frag.updateAccessRights(account[0]);
+                }
+
+                if (responseDialog != null && responseDialog.isDismissible()) {
+                    responseDialog.dismiss();
+                }
             }
         });
-        return account[0];
+    }
+
+    public void retrieveProductFromBarcode(final String data) {
+        FoobarAPI.getProductFromBarcode(data, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("StringRequest", response);
+                Gson gson = new Gson();
+                Product[] p = gson.fromJson(response, Product[].class);
+
+                if (p.length > 0) {
+                    addProductToCart(p[0]);
+                }
+                else {addFakeProductToCart();}
+                if (responseDialog != null && responseDialog.isDismissible()) {
+                    responseDialog.dismiss();
+                }
+            }
+        });
     }
 
     private void addAccountFragment(IAccount account) {
@@ -162,7 +191,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
 
     public void addProductToCart(Product prod) {
-        Log.d(TAG, "Add product to cart");
+        //Log.d(TAG, "Add product to cart");
         for (int i = 0; i < productList.size(); i++) {
             if (productList.get(i).equals(prod)) {
                 productList.get(i).incrementAmount();
@@ -179,6 +208,25 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         }
 
         FoobarAPI.sendStateToThunderpush(activeState);
+
+    }
+
+    private void addFakeProductToCart() {
+        final IProduct p = IProduct.fakeProduct();
+        productList.add(p);
+        cartAdapter.notifyItemInserted(productList.size());
+        if (activeState.getPurchaseState().equals(PurchaseState.WAITING)) {
+            activeState.setPurchaseState(PurchaseState.ONGOING);
+            buttonsSetEnable(true);
+        }
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                productList.remove(p);
+                cartAdapter.notifyDataSetChanged();
+            }
+        }, 2000);
 
     }
 
@@ -200,13 +248,6 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         _decBtn.setEnabled(b);
         _delBtn.setEnabled(b);
     }
-
-    private void updateState() {
-        Log.d("CartFragment", "State updated");
-
-
-    }
-
 
 
 
@@ -237,16 +278,7 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.cart_clear_btn) {
-            if (_acc != null) {
-                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-                ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
-                ft.remove(_acc).commit();
-                _acc = null;
-            }
-            buttonsSetEnable(false);
-            activeState.clearState();
-            cartAdapter.notifyDataSetChanged();
-            FoobarAPI.sendStateToThunderpush(activeState);
+            clearCart();
             return;
         }
 
@@ -275,6 +307,19 @@ public class CartFragment extends Fragment implements View.OnClickListener {
         for (IProduct p : toBeRemoved) {
             productList.remove(p);
         }
+        cartAdapter.notifyDataSetChanged();
+        FoobarAPI.sendStateToThunderpush(activeState);
+    }
+
+    public void clearCart() {
+        if (_acc != null) {
+            FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+            ft.setCustomAnimations(R.anim.slide_in_from_top, R.anim.slide_out_to_top);
+            ft.remove(_acc).commit();
+            _acc = null;
+        }
+        buttonsSetEnable(false);
+        activeState.clearState();
         cartAdapter.notifyDataSetChanged();
         FoobarAPI.sendStateToThunderpush(activeState);
     }
@@ -336,26 +381,12 @@ public class CartFragment extends Fragment implements View.OnClickListener {
 
         @JavascriptInterface
         public void parseNewCard(final String data){
-            IAccount account = retrieveAccountFromCard(data);
-
-            PurchaseDialogFragment frag = (PurchaseDialogFragment) getActivity().getFragmentManager().findFragmentByTag("dialog");
-            if (frag != null) {
-                frag.updateAccessRights(account);
-            }
+            retrieveAccountFromCard(data);
         }
 
         @JavascriptInterface
         public void parseNewProduct(final String data){
-            FoobarAPI.getProductFromBarcode(data, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    Log.d("StringRequest", response);
-                    Gson gson = new Gson();
-                    Product p = gson.fromJson(response, Product.class);
-
-                    addProductToCart(p);
-                }
-            });
+            retrieveProductFromBarcode(data);
         }
     }
 }

@@ -17,6 +17,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,6 +33,7 @@ import nu.datavetenskap.foobarkiosk.models.StoreEntity;
  * A placeholder fragment containing a simple view.
  */
 public class StoreFragment extends Fragment {
+    private static final int PRODUCT_COLUMNS = 4;
 
     CartFragment cartFragment;
 
@@ -47,6 +49,7 @@ public class StoreFragment extends Fragment {
     @Bind(R.id.btn_get_categories) Button _btnState;
     @Bind(R.id.btn_get_card) Button _btncard;
     @Bind(R.id.grid_view) RecyclerView _grid;
+    @Bind(R.id.btn_get_random) Button _btnRand;
 
     public StoreFragment() {
     }
@@ -63,15 +66,11 @@ public class StoreFragment extends Fragment {
         storeProductList = new ArrayList<>();
         storeCategoriesList = new ArrayList<>();
         storeEntities = new ArrayList<>();
-//        storeCategoryAdapter = new StoreAdapter(getContext(), storeCategoriesList,
-//                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
-//        StoreAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
-//            @Override
-//            public void onItemClick(int position, View view) {
-//                initiateEntityAction(position);
-//            }
-//        });
 
+
+        mgridLayoutManager = new GridLayoutManager(getActivity(), PRODUCT_COLUMNS);
+        _grid.setLayoutManager(mgridLayoutManager);
+        storeAdapter = new StoreAdapter(getContext(), storeProductList,
         storeEntityAdapter = new StoreAdapter(getContext(), storeEntities,
                 pref.getString(getString(R.string.pref_key_fooapi_host), ""));
         StoreAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
@@ -81,13 +80,6 @@ public class StoreFragment extends Fragment {
             }
         });
         _grid.setAdapter(storeEntityAdapter);
-
-
-        mgridLayoutManager = new GridLayoutManager(getActivity(), 5);
-        _grid.setLayoutManager(mgridLayoutManager);
-//        storeProductAdapter = new StoreAdapter(getContext(), storeProductList,
-//                pref.getString(getString(R.string.pref_key_fooapi_host), ""));
-//        _grid.setAdapter(storeCategoryAdapter);
 
         cartFragment = (CartFragment) getChildFragmentManager().findFragmentById(R.id.store_sidebar);
 
@@ -117,6 +109,17 @@ public class StoreFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 cartFragment.retrieveAccountFromCard("1337");
+            }
+        });
+
+        _btnRand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] text = {"7340083438684", "7611612221351", "7310500088853", "1234567890"};
+                Random r = new Random();
+                int i = r.nextInt(text.length);
+
+                cartFragment.retrieveProductFromBarcode(text[i]);
             }
         });
 
@@ -168,8 +171,6 @@ public class StoreFragment extends Fragment {
 
 
     private void addAllProducts(String str) {
-
-        Log.d("StoreFragment", str);
 
         Gson gson = new Gson();
         Product[] products = gson.fromJson(str, Product[].class);
