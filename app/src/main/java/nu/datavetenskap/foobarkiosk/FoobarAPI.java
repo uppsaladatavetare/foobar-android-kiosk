@@ -66,7 +66,7 @@ public class FoobarAPI {
 
     public static void getCategories(Response.Listener<String> onResponse) {
         checkCompleteness();
-        sendAPIRequest("/api/categories/", onResponse);
+        sendAPIRequest("/api/categories/", Request.Method.GET, onResponse);
     }
 
     public static void getAccountFromCard(String card, Response.Listener<String> stringRequest) {

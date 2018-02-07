@@ -40,10 +40,9 @@ public class StoreFragment extends Fragment {
     ArrayList<StoreEntity> storeProductList;
     ArrayList<StoreEntity> storeCategoriesList;
     ArrayList<StoreEntity> storeEntities;
-    StoreAdapter storeProductAdapter;
-    StoreAdapter storeCategoryAdapter;
     StoreAdapter storeEntityAdapter;
     GridLayoutManager mgridLayoutManager;
+    boolean onCategoryView;
 
     @Bind(R.id.btn_get_products) Button _btnProducts;
     @Bind(R.id.btn_get_categories) Button _btnState;
@@ -66,11 +65,12 @@ public class StoreFragment extends Fragment {
         storeProductList = new ArrayList<>();
         storeCategoriesList = new ArrayList<>();
         storeEntities = new ArrayList<>();
+        onCategoryView = true;
 
 
         mgridLayoutManager = new GridLayoutManager(getActivity(), PRODUCT_COLUMNS);
         _grid.setLayoutManager(mgridLayoutManager);
-        storeAdapter = new StoreAdapter(getContext(), storeProductList,
+        //storeAdapter = new StoreAdapter(getContext(), storeProductList,
         storeEntityAdapter = new StoreAdapter(getContext(), storeEntities,
                 pref.getString(getString(R.string.pref_key_fooapi_host), ""));
         StoreAdapter.setOnItemClickListener(new StoreAdapter.ClickListener() {
@@ -128,9 +128,11 @@ public class StoreFragment extends Fragment {
 
     private void initiateEntityAction(int position) {
         StoreEntity entity = storeEntities.get(position);
+
         if (entity instanceof Category) {
             String categoryId = entity.getId();
             storeEntities.clear();
+            onCategoryView = false;
             for (StoreEntity e : storeProductList) {
                 Product p = (Product) e;
                 if (p.getCategory() != null && p.isActive() && p.getCategory().equals(categoryId)) {
@@ -142,6 +144,7 @@ public class StoreFragment extends Fragment {
         }
         else if(entity instanceof StoreEntity.BackButtonEntity) {
             storeEntities.clear();
+            onCategoryView = true;
             storeEntities.addAll(storeCategoriesList);
             storeEntityAdapter.notifyDataSetChanged();
         }
@@ -231,4 +234,12 @@ public class StoreFragment extends Fragment {
     }
 
 
+    public void goToStoreTop() {
+        if (!onCategoryView) {
+            storeEntities.clear();
+            onCategoryView = true;
+            storeEntities.addAll(storeCategoriesList);
+            storeEntityAdapter.notifyDataSetChanged();
+        }
+    }
 }

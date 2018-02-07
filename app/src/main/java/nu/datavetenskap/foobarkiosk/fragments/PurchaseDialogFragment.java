@@ -107,22 +107,22 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
     @Override
     public void onClick(View v) {
+        FragmentManager fm = getFragmentManager();
         switch (v.getId()) {
             case R.id.purchase_cash_btn:
                 cashPurchase();
-                // DialogFragment.show() will take care of adding the fragment
-                // in a transaction.
                 dismiss();
-                FragmentManager fm = getFragmentManager();
-
-                // Create and show the dialog.
                 responseDialog.show(fm, "dialog");
                 break;
             case R.id.purchase_foocash_btn:
                 fooCashPurchase();
+                dismiss();
+                responseDialog.show(fm, "dialog");
                 break;
             case R.id.purchase_credit_btn:
                 creditCardPurchase();
+                dismiss();
+                responseDialog.show(fm, "dialog");
                 break;
             case R.id.purchase_cancel_btn:
                 dismiss();

@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements
         PurchaseDialogFragment.OnPurchaseDialogInteractionListener {
     private static final String TAG = "MainActivity";
 
+    Fragment mainFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements
             // Create a new Fragment to be placed in the activity layout
             // Add the fragment to the 'fragment_container' FrameLayout
             if (fragChoice != null) {
-                Fragment mainFragment;
+
                 if (fragChoice.equals("web")) {
                     mainFragment = new WebViewFragment();
                     getSupportFragmentManager().beginTransaction()
@@ -132,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements
         if (frag != null) {
             frag.clearCart();
         }
+        ((StoreFragment) mainFragment).goToStoreTop();
     }
 
     @Override
