@@ -26,7 +26,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
@@ -55,12 +55,12 @@ public class CartFragment extends Fragment implements View.OnClickListener {
     private ResponseDialog responseDialog;
 
 
-    @Bind(R.id.cart_product_list) RecyclerView _cart;
-    @Bind(R.id.cart_decrease_btn) ImageButton _decBtn;
-    @Bind(R.id.cart_increase_btn) ImageButton _incBtn;
-    @Bind(R.id.cart_delete_btn) ImageButton _delBtn;
-    @Bind(R.id.cart_clear_btn) ImageButton _clearBtn;
-    @Bind(R.id.initiate_purchase_button) Button _purchaseBtn;
+    @BindView(R.id.cart_product_list) RecyclerView _cart;
+    @BindView(R.id.cart_decrease_btn) ImageButton _decBtn;
+    @BindView(R.id.cart_increase_btn) ImageButton _incBtn;
+    @BindView(R.id.cart_delete_btn) ImageButton _delBtn;
+    @BindView(R.id.cart_clear_btn) ImageButton _clearBtn;
+    @BindView(R.id.initiate_purchase_button) Button _purchaseBtn;
     AccountFragment _acc;
     ArrayList<IProduct> productList;
     LinearLayoutManager mLinearLayoutManager;

@@ -4,7 +4,7 @@
         android:title="@string/pref_web_category">
 
         <EditTextPreference
-            android:defaultValue="@string/config_foobar_kiosk_host"
+            android:defaultValue="0.0.0.0:0000"
             android:inputType="textUri"
             android:hint="@string/pref_hint_host_text"
             android:key="@string/pref_key_fookiosk_host"
@@ -18,7 +18,7 @@
         android:title="@string/pref_native_category">
 
         <EditTextPreference
-            android:defaultValue="@string/config_foobar_api_host"
+            android:defaultValue="0.0.0.0:0000"
             android:inputType="textUri"
             android:hint="@string/pref_hint_host_text"
             android:key="@string/pref_key_fooapi_host"
@@ -28,7 +28,6 @@
             android:title="@string/pref_title_foo_api_host" />
 
         <EditTextPreference
-            android:defaultValue="@string/config_foobar_api_token"
             android:inputType="textVisiblePassword"
             android:hint="@string/pref_hint_foo_api_token"
             android:maxLines="1"

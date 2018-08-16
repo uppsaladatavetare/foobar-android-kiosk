@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.lang.reflect.Field;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.R;
 
@@ -19,9 +19,9 @@ public class PurchaseButton extends LinearLayout {
     CharSequence textAttribute;
     CharSequence imageAttribute;
 
-    @Bind(R.id.purchase_button_background) LinearLayout _frame;
-    @Bind(R.id.purchase_button_img) ImageView _img;
-    @Bind(R.id.purchase_button_txt) TextView _txt;
+    @BindView(R.id.purchase_button_background) LinearLayout _frame;
+    @BindView(R.id.purchase_button_img) ImageView _img;
+    @BindView(R.id.purchase_button_txt) TextView _txt;
 
 
     public PurchaseButton(Context context, @Nullable AttributeSet attrs) {

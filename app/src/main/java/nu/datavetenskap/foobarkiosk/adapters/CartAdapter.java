@@ -15,7 +15,7 @@ import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.VolleySingleton;
@@ -74,11 +74,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     // you provide access to all the views for a data item in a view holder
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @Bind(R.id.product_cart_row) RelativeLayout _row;
-        @Bind(R.id.product_cart_image) NetworkImageView _img;
-        @Bind(R.id.product_cart_amount) TextView _amount;
-        @Bind(R.id.product_cart_name) TextView _name;
-        @Bind(R.id.product_cart_cost) TextView _cost;
+        @BindView(R.id.product_cart_row) RelativeLayout _row;
+        @BindView(R.id.product_cart_image) NetworkImageView _img;
+        @BindView(R.id.product_cart_amount) TextView _amount;
+        @BindView(R.id.product_cart_name) TextView _name;
+        @BindView(R.id.product_cart_cost) TextView _cost;
         IProduct product;
 
         public ViewHolder(View v) {

@@ -1,6 +1,7 @@
 package nu.datavetenskap.foobarkiosk.fragments;
 
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
@@ -18,9 +19,10 @@ import com.sumup.merchant.api.SumUpAPI;
 import com.sumup.merchant.api.SumUpLogin;
 import com.sumup.merchant.api.SumUpPayment;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.Elements.PurchaseButton;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
@@ -31,16 +33,17 @@ import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
 
 public class PurchaseDialogFragment extends DialogFragment implements
         View.OnClickListener {
+    private FragmentActivity activity;
     private static final String TAG = "PurchaseDialogFragment";
     private OnPurchaseDialogInteractionListener mListener;
     private static IState activeState;
     private static Gson gson;
     private ResponseDialog responseDialog;
 
-    @Bind(R.id.purchase_cash_btn) PurchaseButton _cashBtn;
-    @Bind(R.id.purchase_foocash_btn) PurchaseButton _fooCBtn;
-    @Bind(R.id.purchase_credit_btn) PurchaseButton _creditBtn;
-    @Bind(R.id.purchase_cancel_btn) Button _cancelBtn;
+    @BindView(R.id.purchase_cash_btn) PurchaseButton _cashBtn;
+    @BindView(R.id.purchase_foocash_btn) PurchaseButton _fooCBtn;
+    @BindView(R.id.purchase_credit_btn) PurchaseButton _creditBtn;
+    @BindView(R.id.purchase_cancel_btn) Button _cancelBtn;
 
     @Nullable
     @Override
@@ -163,36 +166,41 @@ public class PurchaseDialogFragment extends DialogFragment implements
     }
 
     private void testLogin() {
-        SumUpLogin sumUplogin = SumUpLogin.builder(getString(R.string.sumup_access_key)).build();
-        SumUpAPI.openLoginActivity(getActivity(), sumUplogin, REQUEST_CODE_LOGIN);
+        SumUpLogin sumUplogin = SumUpLogin.builder("ThisIsDummyText").build();
+        SumUpAPI.openLoginActivity(activity, sumUplogin, REQUEST_CODE_LOGIN);
     }
 
     private void testPurchase() {
         SumUpPayment payment = SumUpPayment.builder()
+
                 // mandatory parameters
-                // Please go to https://me.sumup.com/developers to retrieve your Affiliate Key by entering the application ID of your app. (e.g. com.sumup.sdksampleapp)
-                .affiliateKey(getString(R.string.sumup_access_key))
-                //.accessToken("YOUR_USER_TOKEN")
-                // Total purchase cost amount
-                .productAmount(activeState.getPurchaseCost())
-                .currency(SumUpPayment.Currency.SEK)
-                // optional: include a tip amount in addition to the productAmount
-                //.tipAmount(0.10)
+                .total(new BigDecimal(6)) // minimum 1.00
+                .currency(SumUpPayment.Currency.EUR)
+                // optional: include a tip amount in addition to the total
+                // .tip(new BigDecimal("0.10"))
+
                 // optional: add details
-                .productTitle("Foobar Kiosk")
-                //.receiptEmail("customer@mail.com")
-                //.receiptSMS("+3531234567890")
+                .title("Foobar Kiosk")
+                // .receiptEmail("customer@mail.com")
+                // .receiptSMS("+3531234567890")
+
                 // optional: Add metadata
                 //.addAdditionalInfo("Delicatoboll", "6 kr")
                 // optional: foreign transaction ID, must be unique!
                 .foreignTransactionId(UUID.randomUUID().toString())  // can not exceed 128 chars
+
                 // optional: skip the success screen
                 //.skipSuccessScreen()
                 .build();
 
+        SumUpAPI.checkout(activity, payment, REQUEST_CODE_PAYMENT);
 
-        SumUpAPI.openPaymentActivity(getActivity(), payment, 1);
+    }
 
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        activity = getActivity();
     }
 
     public void updateAccessRights(final IAccount account) {

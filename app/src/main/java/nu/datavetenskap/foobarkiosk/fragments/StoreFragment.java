@@ -17,7 +17,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Random;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
@@ -36,11 +36,11 @@ public class StoreFragment extends Fragment {
     StoreAdapter storeAdapter;
     GridLayoutManager mgridLayoutManager;
 
-    @Bind(R.id.btn_get_products) Button _btnProducts;
-    @Bind(R.id.btn_send_state) Button _btnState;
-    @Bind(R.id.btn_get_card) Button _btncard;
-    @Bind(R.id.grid_view) RecyclerView _grid;
-    @Bind(R.id.btn_get_random) Button _btnRand;
+    @BindView(R.id.btn_get_products) Button _btnProducts;
+    @BindView(R.id.btn_send_state) Button _btnState;
+    @BindView(R.id.btn_get_card) Button _btncard;
+    @BindView(R.id.grid_view) RecyclerView _grid;
+    @BindView(R.id.btn_get_random) Button _btnRand;
 
     public StoreFragment() {
     }

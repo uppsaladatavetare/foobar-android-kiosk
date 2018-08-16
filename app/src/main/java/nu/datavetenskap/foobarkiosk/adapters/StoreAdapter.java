@@ -12,7 +12,7 @@ import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.VolleySingleton;
@@ -68,8 +68,8 @@ public class StoreAdapter extends RecyclerView.Adapter<StoreAdapter.ViewHolder> 
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        @Bind(R.id.product_image) NetworkImageView _img;
-        @Bind(R.id.product_name) TextView _name;
+        @BindView(R.id.product_image) NetworkImageView _img;
+        @BindView(R.id.product_name) TextView _name;
         Product _product;
 
 

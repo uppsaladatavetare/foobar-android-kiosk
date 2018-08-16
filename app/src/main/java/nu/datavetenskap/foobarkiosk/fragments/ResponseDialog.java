@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.models.IAccount;
@@ -23,10 +23,10 @@ import nu.datavetenskap.foobarkiosk.models.IAccount;
 
 public class ResponseDialog extends DialogFragment implements View.OnClickListener {
 
-    @Bind(R.id.response_dialog_spinner) ProgressBar _spinner;
-    @Bind(R.id.response_dialog_text) TextView _text;
-    @Bind(R.id.response_dialog_cancelBtn) Button _cancelBtn;
-    @Bind(R.id.response_dialog_image) ImageView _img;
+    @BindView(R.id.response_dialog_spinner) ProgressBar _spinner;
+    @BindView(R.id.response_dialog_text) TextView _text;
+    @BindView(R.id.response_dialog_cancelBtn) Button _cancelBtn;
+    @BindView(R.id.response_dialog_image) ImageView _img;
 
     private boolean dismissible = false;
     private Handler dismissalHandler;

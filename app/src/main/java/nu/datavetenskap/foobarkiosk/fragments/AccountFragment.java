@@ -23,7 +23,7 @@ import net.glxn.qrgen.android.QRCode;
 
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.R;
 import nu.datavetenskap.foobarkiosk.models.IAccount;
@@ -42,9 +42,9 @@ public class AccountFragment extends Fragment {
     private SharedPreferences pref;
     private IAccount account;
 
-    @Bind(R.id.account_name) TextView _aName;
-    @Bind(R.id.account_balance) TextView _aBalance;
-    @Bind(R.id.account_profile) ImageButton _btnProfile;
+    @BindView(R.id.account_name) TextView _aName;
+    @BindView(R.id.account_balance) TextView _aBalance;
+    @BindView(R.id.account_profile) ImageButton _btnProfile;
 
     public AccountFragment() {
         // Required empty public constructor

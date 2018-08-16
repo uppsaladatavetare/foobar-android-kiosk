@@ -70,25 +70,8 @@ public class WebViewFragment extends Fragment {
     }
 
     private void runSumUpPayment() {
-        SumUpPayment payment = SumUpPayment.builder()
-                // mandatory parameters
-                // Please go to https://me.sumup.com/developers to get your Affiliate Key by entering the application ID of your app. (e.g. com.sumup.sdksampleapp)
-                .affiliateKey("7ca84f17-84a5-4140-8df6-6ebeed8540fc") // Example key from SumUp code example
-                .productAmount(1.12)
-                .currency(SumUpPayment.Currency.SEK)
-                // optional: add details
-                .productTitle("Foobar kiosk")
-                .receiptEmail("customer@mail.com")
-                .receiptSMS("+3531234567890")
-                // optional: Add metadata
-                .addAdditionalInfo("Billys pizza", "13 kr")
-                .addAdditionalInfo("From", "Paris")
-                .addAdditionalInfo("To", "Berlin")
-                // optional: foreign transaction ID, must be unique!
-                .foreignTransactionId(UUID.randomUUID().toString()) // can not exceed 128 chars
-                .build();
 
-        SumUpAPI.openPaymentActivity(getActivity(), payment, REQUEST_CODE_PAYMENT);
+        // Removed due to deprecated example code that caused errors on new SumUp-version
     }
 
 
