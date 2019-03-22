@@ -75,7 +75,7 @@ public class ResponseDialog extends DialogFragment implements View.OnClickListen
 
     public void onSuccess(final float p) { onSuccess(p, null); }
 
-    public void onSuccess(final float purchaseCost, final IAccount account) {
+    public void onSuccess(final float purchaseCost, final @Nullable IAccount account) {
 
 
         new Handler().postDelayed(new Runnable() {
@@ -113,6 +113,6 @@ public class ResponseDialog extends DialogFragment implements View.OnClickListen
 
 
             }
-        }, 1500);
+        }, 500);
     }
 }

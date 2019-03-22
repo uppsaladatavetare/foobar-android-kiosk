@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import nu.datavetenskap.foobarkiosk.models.IProduct;
 import nu.datavetenskap.foobarkiosk.models.statemodels.IState;
@@ -119,6 +120,13 @@ public class FoobarAPI {
         checkCompleteness();
         sendThunderMsgChannel(STATE, gson.toJson(state));
 
+    }
+
+    public static void sendBarcodeToThunderpush(final String str) {
+        sendThunderMsgChannel("products/",str);
+    }
+    public static void sendFooCardToThunderpush(final String str) {
+        sendThunderMsgChannel("cards/",str);
     }
 
 

@@ -21,6 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import nu.datavetenskap.foobarkiosk.FoobarAPI;
 import nu.datavetenskap.foobarkiosk.R;
+import nu.datavetenskap.foobarkiosk.VolleySingleton;
 import nu.datavetenskap.foobarkiosk.adapters.StoreAdapter;
 import nu.datavetenskap.foobarkiosk.models.Product;
 
@@ -94,7 +95,8 @@ public class StoreFragment extends Fragment {
         _btncard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cartFragment.retrieveAccountFromCard("1337");
+                //cartFragment.retrieveAccountFromCard("1337");
+                FoobarAPI.sendFooCardToThunderpush("1337");
             }
         });
 
@@ -105,7 +107,8 @@ public class StoreFragment extends Fragment {
                 Random r = new Random();
                 int i = r.nextInt(text.length);
 
-                cartFragment.retrieveProductFromBarcode(text[i]);
+                //cartFragment.retrieveProductFromBarcode(text[i]);
+                FoobarAPI.sendBarcodeToThunderpush(text[i]);
             }
         });
 

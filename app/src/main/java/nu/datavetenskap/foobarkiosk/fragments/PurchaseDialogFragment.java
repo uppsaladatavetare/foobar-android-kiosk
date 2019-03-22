@@ -60,6 +60,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
         _creditBtn.setOnClickListener(this);
         _cancelBtn.setOnClickListener(this);
 
+        // Disabled until further development and testing
         _creditBtn.setEnabled(false);
         _creditBtn.setText("To be announced later");
 
@@ -110,22 +111,25 @@ public class PurchaseDialogFragment extends DialogFragment implements
 
     @Override
     public void onClick(View v) {
+        FragmentManager fm = getFragmentManager();
+
         switch (v.getId()) {
             case R.id.purchase_cash_btn:
                 cashPurchase();
                 // DialogFragment.show() will take care of adding the fragment
                 // in a transaction.
                 dismiss();
-                FragmentManager fm = getFragmentManager();
-
                 // Create and show the dialog.
                 responseDialog.show(fm, "dialog");
                 break;
             case R.id.purchase_foocash_btn:
                 fooCashPurchase();
+                dismiss();
+                responseDialog.show(fm, "dialog");
                 break;
             case R.id.purchase_credit_btn:
-                creditCardPurchase();
+                // Disabled until further development and testing
+                //creditCardPurchase();
                 break;
             case R.id.purchase_cancel_btn:
                 dismiss();
@@ -161,6 +165,7 @@ public class PurchaseDialogFragment extends DialogFragment implements
                 });
     }
 
+    // Disabled until further development and testing
     private void creditCardPurchase() {
         testPurchase();
     }
